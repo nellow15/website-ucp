@@ -125,6 +125,15 @@
             flex-wrap: wrap;
         }
         
+        .btn-group-lg {
+            gap: 1.5rem;
+        }
+        
+        .btn-group-lg .btn {
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+        }
+        
         /* Navigation */
         .navbar {
             background: rgba(255, 255, 255, 0.95);
@@ -207,6 +216,22 @@
         .btn-outline:hover {
             background: #000;
             color: white;
+        }
+        
+        .btn-secondary {
+            background: #666;
+        }
+        
+        .btn-secondary:hover {
+            background: #555;
+        }
+        
+        .btn-success {
+            background: #059669;
+        }
+        
+        .btn-success:hover {
+            background: #047857;
         }
         
         /* Dashboard Stats */
@@ -715,6 +740,10 @@
                             <i class="fas fa-sign-in-alt"></i>
                             Login
                         </a>
+                        <a href="/register" class="btn btn-outline">
+                            <i class="fas fa-user-plus"></i>
+                            Register
+                        </a>
                     <% } %>
                 </div>
             </div>
@@ -753,20 +782,78 @@
                                 Welcome to CENTRA ROLEPLAY
                             </h2>
                             <p class="mb-4" style="color: #666; max-width: 600px; margin: 0 auto 2rem auto;">
-                                Access your gaming account with our secure login system. 
-                                Manage your SA:MP experience with ease and security.
+                                Join our community today! Register now to access all SA:MP UCP features. 
+                                Already have an account? Login to manage your gaming experience.
                             </p>
                             
-                            <div class="btn-group">
-                                <a href="/login" class="btn" style="padding: 1rem 2.5rem;">
-                                    <i class="fas fa-sign-in-alt btn-icon"></i>
-                                    Login to Your Account
+                            <div class="btn-group btn-group-lg">
+                                <a href="/login" class="btn">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                    Login
+                                </a>
+                                <a href="/register" class="btn btn-success">
+                                    <i class="fas fa-user-plus"></i>
+                                    Create Account
                                 </a>
                             </div>
                             
-                            <p class="mt-4" style="color: #999; font-size: 0.9rem;">
-                                Need help? <a href="/contact" style="color: #000; text-decoration: none; font-weight: 500;">Contact Support</a>
+                            <div class="mt-5" style="display: flex; align-items: center; justify-content: center; gap: 1rem;">
+                                <div style="flex: 1; height: 1px; background: rgba(0,0,0,0.1);"></div>
+                                <span style="color: #999; font-size: 0.9rem;">OR</span>
+                                <div style="flex: 1; height: 1px; background: rgba(0,0,0,0.1);"></div>
+                            </div>
+                            
+                            <p class="mt-4" style="color: #666; font-size: 0.9rem;">
+                                <a href="/forgot-password" style="color: #000; text-decoration: none; font-weight: 500;">
+                                    <i class="fas fa-key"></i> Forgot Password?
+                                </a>
+                                <span style="margin: 0 0.5rem;">•</span>
+                                <a href="/contact" style="color: #000; text-decoration: none; font-weight: 500;">
+                                    <i class="fas fa-question-circle"></i> Need Help?
+                                </a>
                             </p>
+                        </div>
+
+                        <!-- Benefits of Registration -->
+                        <div class="mt-5 pt-5" style="border-top: 1px solid rgba(0, 0, 0, 0.1);">
+                            <h3 class="text-center mb-4" style="color: #333; font-weight: 600;">
+                                Why Register?
+                            </h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                                <div style="text-align: center;">
+                                    <div style="width: 50px; height: 50px; background: #059669; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 1.2rem;">
+                                        <i class="fas fa-user-shield"></i>
+                                    </div>
+                                    <h4 style="color: #000; margin-bottom: 0.5rem; font-size: 1rem; font-weight: 600;">
+                                        Secure Account
+                                    </h4>
+                                    <p style="color: #666; font-size: 0.85rem;">
+                                        Military-grade encryption for your account data
+                                    </p>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="width: 50px; height: 50px; background: #000; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 1.2rem;">
+                                        <i class="fas fa-gamepad"></i>
+                                    </div>
+                                    <h4 style="color: #000; margin-bottom: 0.5rem; font-size: 1rem; font-weight: 600;">
+                                        Game Access
+                                    </h4>
+                                    <p style="color: #666; font-size: 0.85rem;">
+                                        Play SA:MP with your personalized account
+                                    </p>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="width: 50px; height: 50px; background: #dc2626; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 1.2rem;">
+                                        <i class="fas fa-chart-line"></i>
+                                    </div>
+                                    <h4 style="color: #000; margin-bottom: 0.5rem; font-size: 1rem; font-weight: 600;">
+                                        Track Progress
+                                    </h4>
+                                    <p style="color: #666; font-size: 0.85rem;">
+                                        Monitor your gaming statistics and achievements
+                                    </p>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Features Grid -->
@@ -813,17 +900,23 @@
                             <h3 class="text-center mb-4" style="color: #333; font-weight: 600;">Getting Started</h3>
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
                                 <div style="text-align: center;">
-                                    <div style="width: 60px; height: 60px; background: #000; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-weight: bold; font-size: 1.2rem;">1</div>
+                                    <div style="width: 60px; height: 60px; background: #000; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-weight: bold; font-size: 1.2rem;">
+                                        <i class="fas fa-user-plus"></i>
+                                    </div>
+                                    <h4 style="color: #000; margin-bottom: 0.5rem; font-weight: 600;">Register</h4>
+                                    <p style="color: #666; font-size: 0.9rem;">Create your account in seconds</p>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="width: 60px; height: 60px; background: #000; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-weight: bold; font-size: 1.2rem;">
+                                        <i class="fas fa-sign-in-alt"></i>
+                                    </div>
                                     <h4 style="color: #000; margin-bottom: 0.5rem; font-weight: 600;">Login</h4>
-                                    <p style="color: #666; font-size: 0.9rem;">Use your existing account credentials</p>
+                                    <p style="color: #666; font-size: 0.9rem;">Access your dashboard</p>
                                 </div>
                                 <div style="text-align: center;">
-                                    <div style="width: 60px; height: 60px; background: #000; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-weight: bold; font-size: 1.2rem;">2</div>
-                                    <h4 style="color: #000; margin-bottom: 0.5rem; font-weight: 600;">Access Dashboard</h4>
-                                    <p style="color: #666; font-size: 0.9rem;">Manage your account settings</p>
-                                </div>
-                                <div style="text-align: center;">
-                                    <div style="width: 60px; height: 60px; background: #000; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-weight: bold; font-size: 1.2rem;">3</div>
+                                    <div style="width: 60px; height: 60px; background: #000; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-weight: bold; font-size: 1.2rem;">
+                                        <i class="fas fa-gamepad"></i>
+                                    </div>
                                     <h4 style="color: #000; margin-bottom: 0.5rem; font-weight: 600;">Play</h4>
                                     <p style="color: #666; font-size: 0.9rem;">Use verification code to access game</p>
                                 </div>
@@ -933,6 +1026,10 @@
                             <a href="/login" class="footer-link">
                                 <i class="fas fa-sign-in-alt"></i>
                                 Login
+                            </a>
+                            <a href="/register" class="footer-link">
+                                <i class="fas fa-user-plus"></i>
+                                Register
                             </a>
                             <% if (user) { %>
                             <a href="/dashboard" class="footer-link">

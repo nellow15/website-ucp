@@ -8,6 +8,482 @@
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Loading Spinner */
+        .loading {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #000;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Password Strength Meter */
+        .password-strength {
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .password-strength-meter {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .password-strength-weak {
+            background: #dc3545;
+        }
+
+        .password-strength-fair {
+            background: #ffc107;
+        }
+
+        .password-strength-good {
+            background: #28a745;
+        }
+
+        .password-strength-strong {
+            background: #17a2b8;
+        }
+
+        /* Form Input Styling - FIXED ICON POSITION */
+        .input-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: white;
+            box-sizing: border-box;
+        }
+
+        .form-control.with-toggle {
+            padding-right: 45px;
+        }
+
+        .form-control.with-icon {
+            padding-left: 45px;
+        }
+
+        .form-control:hover {
+            border-color: #999;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #000;
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Form icon positioning - FIXED */
+        .form-control-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 1rem;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Password toggle positioning - FIXED */
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #666;
+            z-index: 10;
+            background: transparent;
+            border: none;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .password-toggle:hover {
+            color: #000;
+        }
+
+        /* Validation feedback */
+        .validation-feedback {
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            min-height: 20px;
+        }
+
+        .validation-feedback.success {
+            color: #28a745;
+        }
+
+        .validation-feedback.error {
+            color: #dc3545;
+        }
+
+        /* Requirements list */
+        .requirements-list {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 8px;
+            padding-left: 15px;
+        }
+
+        .requirement-item {
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .requirement-item i {
+            font-size: 0.7rem;
+            width: 12px;
+            text-align: center;
+        }
+
+        .requirement-item.valid {
+            color: #28a745;
+        }
+
+        .requirement-item.invalid {
+            color: #dc3545;
+        }
+
+        /* Form Group Spacing */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        /* FOOTER STYLE SAMA DENGAN LOGIN */
+        .footer {
+            background: linear-gradient(135deg, #000 0%, #111 100%);
+            color: white;
+            padding: 4rem 0 2rem 0;
+            margin-top: auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-decoration: none;
+            margin-bottom: 1rem;
+        }
+
+        .footer-description {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            font-size: 0.95rem;
+            max-width: 300px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: #000;
+            transform: translateY(-3px);
+        }
+
+        .footer-links-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .footer-links-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .footer-column-title {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .footer-column-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: white;
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0;
+        }
+
+        .footer-link:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .footer-link i {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .footer-copyright {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+
+        .footer-legal {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-legal-link {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-legal-link:hover {
+            color: white;
+        }
+
+        /* Alert styling */
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: fadeIn 0.3s ease-out;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .alert-success {
+            background: rgba(5, 150, 105, 0.1);
+            color: #059669;
+            border-left: 4px solid #059669;
+        }
+
+        .alert-error {
+            background: rgba(220, 38, 38, 0.1);
+            color: #dc2626;
+            border-left: 4px solid #dc2626;
+        }
+
+        .alert-icon {
+            font-size: 1.2rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Button Styling */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: #000;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background: #333;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #000;
+            color: #000;
+        }
+
+        .btn-outline:hover {
+            background: #000;
+            color: white;
+        }
+
+        /* Card Styling */
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem;
+            width: 100%;
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .card-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-header p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        /* Text Alignment */
+        .text-center {
+            text-align: center;
+        }
+
+        /* Margin Utilities */
+        .mt-3 { margin-top: 1rem; }
+        .mt-4 { margin-top: 1.5rem; }
+        .mb-3 { margin-bottom: 1rem; }
+
+        /* Responsive Footer */
+        @media (max-width: 768px) {
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .footer-links-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .footer-legal {
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -16,7 +492,7 @@
                 CENTRA ROLEPLAY
             </a>
             <div class="navbar-menu">
-                <a href="/" class="navbar-item">Home</a>
+                <a href="/" class="navbar-item" style="padding: 0.75rem 1.5rem; display: inline-block; text-decoration: none; color: #000;">Home</a>
                 <a href="/login" class="btn">Login</a>
             </div>
         </div>
@@ -47,13 +523,13 @@
                 <form action="/register" method="POST" id="registerForm">
                     <div class="form-group">
                         <label for="username" class="form-label">Username *</label>
-                        <div style="position: relative;">
-                            <input type="text" id="username" name="username" class="form-control" 
+                        <div class="input-container">
+                            <input type="text" id="username" name="username" class="form-control with-icon" 
                                    placeholder="Choose a username (3-24 characters)" required
                                    minlength="3" maxlength="24" pattern="[a-zA-Z0-9_]+" autocomplete="username">
                             <i class="fas fa-user form-control-icon"></i>
                         </div>
-                        <div id="username-feedback" style="font-size: 0.85rem; margin-top: 5px;"></div>
+                        <div id="username-feedback" class="validation-feedback"></div>
                         <div style="font-size: 0.85rem; color: #666; margin-top: 5px;">
                             Only letters, numbers, and underscores allowed
                         </div>
@@ -61,33 +537,83 @@
 
                     <div class="form-group">
                         <label for="email" class="form-label">Email Address *</label>
-                        <div style="position: relative;">
-                            <input type="email" id="email" name="email" class="form-control" required
+                        <div class="input-container">
+                            <input type="email" id="email" name="email" class="form-control with-icon" required
                                    placeholder="your.email@example.com" autocomplete="email">
                             <i class="fas fa-envelope form-control-icon"></i>
                         </div>
-                        <div id="email-feedback" style="font-size: 0.85rem; margin-top: 5px;"></div>
+                        <div id="email-feedback" class="validation-feedback"></div>
                     </div>
 
                     <div class="form-group">
                         <label for="phone" class="form-label">Phone Number *</label>
-                        <div style="position: relative;">
-                            <input type="tel" id="phone" name="phone" class="form-control" required 
+                        <div class="input-container">
+                            <input type="tel" id="phone" name="phone" class="form-control with-icon" required 
                                    pattern="[0-9+\-\s]+" placeholder="+628123456789" autocomplete="tel">
                             <i class="fas fa-phone form-control-icon"></i>
                         </div>
-                        <div id="phone-feedback" style="font-size: 0.85rem; margin-top: 5px;"></div>
+                        <div id="phone-feedback" class="validation-feedback"></div>
                     </div>
 
-                    <div class="alert" style="background: #f8f9fa; border: 1px solid #ddd;">
+                    <!-- Password Section -->
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password *</label>
+                        <div class="input-container">
+                            <input type="password" id="password" name="password" class="form-control with-icon with-toggle" required
+                                   placeholder="Enter password (min 6 characters)" minlength="6" autocomplete="new-password">
+                            <i class="fas fa-lock form-control-icon"></i>
+                            <button type="button" class="password-toggle" id="togglePassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="password-strength">
+                            <div id="passwordStrength" class="password-strength-meter"></div>
+                        </div>
+                        <div id="password-feedback" class="validation-feedback"></div>
+                        
+                        <!-- Password Requirements -->
+                        <div class="requirements-list" id="passwordRequirements">
+                            <div class="requirement-item invalid" id="req-length">
+                                <i class="fas fa-circle"></i>
+                                <span>At least 6 characters</span>
+                            </div>
+                            <div class="requirement-item invalid" id="req-uppercase">
+                                <i class="fas fa-circle"></i>
+                                <span>Contains uppercase letter</span>
+                            </div>
+                            <div class="requirement-item invalid" id="req-lowercase">
+                                <i class="fas fa-circle"></i>
+                                <span>Contains lowercase letter</span>
+                            </div>
+                            <div class="requirement-item invalid" id="req-number">
+                                <i class="fas fa-circle"></i>
+                                <span>Contains number</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword" class="form-label">Confirm Password *</label>
+                        <div class="input-container">
+                            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control with-icon with-toggle" required
+                                   placeholder="Confirm your password" autocomplete="new-password">
+                            <i class="fas fa-lock form-control-icon"></i>
+                            <button type="button" class="password-toggle" id="toggleConfirmPassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div id="confirmPassword-feedback" class="validation-feedback"></div>
+                    </div>
+
+                    <div class="alert" style="background: #f8f9fa; border: 1px solid #ddd; border-radius: 8px;">
                         <i class="fas fa-info-circle" style="color: #666;"></i>
                         <span style="color: #666; font-size: 0.9rem;">
-                            After registration, you will receive an email with your in-game verification code.
+                            Your password will be securely encrypted. After registration, you will receive an email with your in-game verification code.
                             Your account will be immediately activated.
                         </span>
                     </div>
 
-                    <button type="submit" class="btn btn-block mt-4" id="submitBtn">
+                    <button type="submit" class="btn mt-4" id="submitBtn">
                         <i class="fas fa-user-plus btn-icon"></i>
                         Create Account
                     </button>
@@ -95,7 +621,7 @@
 
                 <div class="text-center mt-4">
                     <p style="color: #666; margin-bottom: 10px;">Already have an account?</p>
-                    <a href="/login" class="btn btn-outline" style="width: 100%;">
+                    <a href="/login" class="btn btn-outline">
                         <i class="fas fa-sign-in-alt"></i>
                         Login Here
                     </a>
@@ -104,28 +630,130 @@
                 <div class="text-center mt-3">
                     <p style="font-size: 0.9rem; color: #999;">
                         <i class="fas fa-shield-alt"></i>
-                        Secure instant registration system
+                        Secure instant registration system with password encryption
                     </p>
                 </div>
             </div>
         </div>
     </main>
 
+    <!-- FOOTER SAMA DENGAN LOGIN -->
     <footer class="footer">
-        <div class="container">
-            <a href="/" class="footer-brand">CENTRA ROLEPLAY</a>
-            <div class="footer-links">
-                <a href="/" class="footer-link">Home</a>
-                <a href="/login" class="footer-link">Login</a>
-                <a href="/register" class="footer-link">Register</a>
+        <div class="footer-container">
+            <div class="footer-grid">
+                <!-- Brand Column -->
+                <div class="footer-brand">
+                    <a href="/" class="footer-logo">
+                        CENTRA ROLEPLAY
+                    </a>
+                    <p class="footer-description">
+                        Professional SA:MP User Control Panel providing secure account management 
+                        and enhanced gaming experience for San Andreas Multiplayer community.
+                    </p>
+                    <div class="footer-social">
+                        <a href="https://discord.gg/uUgqeDDf3B" class="social-link" aria-label="Discord">
+                            <i class="fab fa-discord"></i>
+                        </a>
+                        <a href="https://github.com/nellow15" class="social-link" aria-label="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Links Columns -->
+                <div class="footer-links-container">
+                    <div class="footer-links-column">
+                        <h4 class="footer-column-title">Navigation</h4>
+                        <a href="/" class="footer-link">
+                            <i class="fas fa-home"></i>
+                            Home
+                        </a>
+                        <a href="/login" class="footer-link">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Login
+                        </a>
+                        <a href="/register" class="footer-link">
+                            <i class="fas fa-user-plus"></i>
+                            Register
+                        </a>
+                        <a href="/about" class="footer-link">
+                            <i class="fas fa-info-circle"></i>
+                            About Us
+                        </a>
+                    </div>
+
+                    <div class="footer-links-column">
+                        <h4 class="footer-column-title">Resources</h4>
+                        <a href="/guides" class="footer-link">
+                            <i class="fas fa-book"></i>
+                            Guides
+                        </a>
+                        <a href="/faq" class="footer-link">
+                            <i class="fas fa-question-circle"></i>
+                            FAQ
+                        </a>
+                        <a href="/support" class="footer-link">
+                            <i class="fas fa-headset"></i>
+                            Support
+                        </a>
+                        <a href="/status" class="footer-link">
+                            <i class="fas fa-server"></i>
+                            Server Status
+                        </a>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="footer-copyright">
-            <p>SA:MP User Control Panel &copy; <%= new Date().getFullYear() %>. All rights reserved.</p>
+
+            <!-- Bottom Bar -->
+            <div class="footer-bottom">
+                <div class="footer-copyright">
+                    <p>
+                        <i class="fas fa-copyright"></i>
+                        2025 CENTRA ROLEPLAY. All rights reserved.
+                    </p>
+                </div>
+                <div class="footer-legal">
+                    <a href="/privacy" class="footer-legal-link">Privacy Policy</a>
+                    <a href="/terms" class="footer-legal-link">Terms of Service</a>
+                    <a href="/cookies" class="footer-legal-link">Cookie Policy</a>
+                    <a href="/legal" class="footer-legal-link">Legal Notice</a>
+                </div>
+            </div>
         </div>
     </footer>
 
     <script>
+        // Password visibility toggle
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+                this.setAttribute('aria-label', 'Hide password');
+            } else {
+                passwordInput.type = 'password';
+                icon.className = 'fas fa-eye';
+                this.setAttribute('aria-label', 'Show password');
+            }
+        });
+
+        document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const icon = this.querySelector('i');
+            
+            if (confirmPasswordInput.type === 'password') {
+                confirmPasswordInput.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+                this.setAttribute('aria-label', 'Hide password');
+            } else {
+                confirmPasswordInput.type = 'password';
+                icon.className = 'fas fa-eye';
+                this.setAttribute('aria-label', 'Show password');
+            }
+        });
+
         // Real-time validation functions
         async function checkUsernameAvailability(username) {
             if (username.length < 3) return false;
@@ -172,8 +800,93 @@
             const element = document.getElementById(elementId);
             if (element) {
                 element.textContent = message;
-                element.style.color = isSuccess ? '#28a745' : '#dc3545';
+                element.className = `validation-feedback ${isSuccess ? 'success' : 'error'}`;
             }
+        }
+
+        // Password strength checker
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            
+            // Length check
+            if (password.length >= 6) strength++;
+            if (password.length >= 8) strength++;
+            if (password.length >= 12) strength++;
+            
+            // Character type checks
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[a-z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            
+            return Math.min(strength, 4); // Max 4 levels
+        }
+
+        // Update password strength meter
+        function updatePasswordStrength(password) {
+            const strength = checkPasswordStrength(password);
+            const meter = document.getElementById('passwordStrength');
+            
+            // Remove all classes
+            meter.className = 'password-strength-meter';
+            
+            // Set width and color based on strength
+            let width = 0;
+            let className = '';
+            
+            switch(strength) {
+                case 0:
+                    width = 0;
+                    className = '';
+                    break;
+                case 1:
+                    width = 25;
+                    className = 'password-strength-weak';
+                    break;
+                case 2:
+                    width = 50;
+                    className = 'password-strength-fair';
+                    break;
+                case 3:
+                    width = 75;
+                    className = 'password-strength-good';
+                    break;
+                case 4:
+                    width = 100;
+                    className = 'password-strength-strong';
+                    break;
+            }
+            
+            meter.style.width = `${width}%`;
+            meter.classList.add(className);
+        }
+
+        // Check individual password requirements
+        function checkPasswordRequirements(password) {
+            const requirements = {
+                length: password.length >= 6,
+                uppercase: /[A-Z]/.test(password),
+                lowercase: /[a-z]/.test(password),
+                number: /[0-9]/.test(password)
+            };
+            
+            // Update requirement indicators
+            Object.keys(requirements).forEach(req => {
+                const element = document.getElementById(`req-${req}`);
+                if (element) {
+                    if (requirements[req]) {
+                        element.classList.remove('invalid');
+                        element.classList.add('valid');
+                        element.innerHTML = '<i class="fas fa-check"></i><span>' + element.querySelector('span').textContent + '</span>';
+                    } else {
+                        element.classList.remove('valid');
+                        element.classList.add('invalid');
+                        element.innerHTML = '<i class="fas fa-circle"></i><span>' + element.querySelector('span').textContent + '</span>';
+                    }
+                }
+            });
+            
+            return requirements;
         }
 
         // Event listeners for real-time validation
@@ -254,7 +967,8 @@
             }
             
             // Check length
-            if (phone.replace(/[^0-9]/g, '').length < 10) {
+            const numericPhone = phone.replace(/[^0-9]/g, '');
+            if (numericPhone.length < 10) {
                 updateFeedback(feedbackId, 'Phone number too short', false);
                 return;
             }
@@ -270,6 +984,60 @@
             }
         });
 
+        // Password validation
+        document.getElementById('password').addEventListener('input', function() {
+            const password = this.value;
+            const feedbackId = 'password-feedback';
+            
+            // Update strength meter
+            updatePasswordStrength(password);
+            
+            // Check requirements
+            const requirements = checkPasswordRequirements(password);
+            
+            // Update feedback
+            if (!password) {
+                updateFeedback(feedbackId, '', true);
+                return;
+            }
+            
+            if (password.length < 6) {
+                updateFeedback(feedbackId, 'Password must be at least 6 characters', false);
+            } else if (Object.values(requirements).every(req => req)) {
+                updateFeedback(feedbackId, '✓ Strong password', true);
+            } else {
+                updateFeedback(feedbackId, 'Password requirements not met', false);
+            }
+            
+            // Check if passwords match
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            if (confirmPassword) {
+                validatePasswordMatch();
+            }
+        });
+
+        // Confirm password validation
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            validatePasswordMatch();
+        });
+
+        function validatePasswordMatch() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const feedbackId = 'confirmPassword-feedback';
+            
+            if (!confirmPassword) {
+                updateFeedback(feedbackId, '', true);
+                return;
+            }
+            
+            if (password === confirmPassword) {
+                updateFeedback(feedbackId, '✓ Passwords match', true);
+            } else {
+                updateFeedback(feedbackId, '✗ Passwords do not match', false);
+            }
+        }
+
         // Form submission validation
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -277,10 +1045,12 @@
             const username = document.getElementById('username').value.trim();
             const email = document.getElementById('email').value.trim();
             const phone = document.getElementById('phone').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
             const submitBtn = document.getElementById('submitBtn');
             
             // Basic validation
-            if (!username || !email || !phone) {
+            if (!username || !email || !phone || !password || !confirmPassword) {
                 alert('Please fill in all required fields');
                 return false;
             }
@@ -308,6 +1078,31 @@
             const phoneRegex = /^[0-9+\-\s]+$/;
             if (!phoneRegex.test(phone)) {
                 alert('Please enter a valid phone number');
+                return false;
+            }
+            
+            const numericPhone = phone.replace(/[^0-9]/g, '');
+            if (numericPhone.length < 10) {
+                alert('Phone number must be at least 10 digits');
+                return false;
+            }
+            
+            // Password validation
+            if (password.length < 6) {
+                alert('Password must be at least 6 characters');
+                return false;
+            }
+            
+            // Check password match
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+                return false;
+            }
+            
+            // Check password strength
+            const requirements = checkPasswordRequirements(password);
+            if (!requirements.uppercase || !requirements.lowercase || !requirements.number) {
+                alert('Password must contain at least one uppercase letter, one lowercase letter, and one number');
                 return false;
             }
             

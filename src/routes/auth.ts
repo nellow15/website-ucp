@@ -26,16 +26,20 @@ router.get('/login', (req: Request, res: Response) => {
     });
 });
 
+// Register Page (DIAKTIFKAN KEMBALI)
+router.get('/register', (req: Request, res: Response) => {
+    if ((req.session as any).user) {
+        return res.redirect('/dashboard');
+    }
+    res.render('register', { 
+        title: 'Register'
+    });
+});
+
 // Login Code Page (DIHAPUS - tidak digunakan lagi)
 router.get('/login-code', (req: Request, res: Response) => {
     req.flash('error_msg', 'Login code system is no longer available');
     res.redirect('/login');
-});
-
-// Register Page (DIHAPUS - redirect ke home)
-router.get('/register', (req: Request, res: Response) => {
-    req.flash('error_msg', 'Registrations are currently closed');
-    res.redirect('/');
 });
 
 // ============ LOGIN HANDLER ============
@@ -104,6 +108,111 @@ router.post('/login', [
     }
 });
 
+// ============ REGISTER HANDLER (DIAKTIFKAN KEMBALI) ============
+
+router.post('/register', [
+    body('username')
+        .notEmpty().withMessage('Username is required')
+        .isLength({ min: 3 }).withMessage('Username must be at least 3 characters'),
+    body('email')
+        .notEmpty().withMessage('Email is required')
+        .isEmail().withMessage('Invalid email format'),
+    body('phone')
+        .optional()
+        .matches(/^[0-9+\-\s()]+$/).withMessage('Invalid phone number format'),
+    body('password')
+        .notEmpty().withMessage('Password is required')
+        .isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+    body('confirmPassword')
+        .notEmpty().withMessage('Confirm password is required')
+], async (req: Request, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        req.flash('error_msg', errors.array()[0].msg);
+        return res.redirect('/register');
+    }
+
+    const { username, email, phone, password, confirmPassword } = req.body;
+
+    // Check if passwords match
+    if (password !== confirmPassword) {
+        req.flash('error_msg', 'Passwords do not match');
+        return res.redirect('/register');
+    }
+
+    try {
+        // Check if username already exists
+        const [usernameRows]: any = await pool.execute(
+            'SELECT Username FROM accounts WHERE Username = ?',
+            [username]
+        );
+
+        if (usernameRows.length > 0) {
+            req.flash('error_msg', 'Username already exists');
+            return res.redirect('/register');
+        }
+
+        // Check if email already exists
+        const [emailRows]: any = await pool.execute(
+            'SELECT Email FROM accounts WHERE Email = ?',
+            [email]
+        );
+
+        if (emailRows.length > 0) {
+            req.flash('error_msg', 'Email already registered');
+            return res.redirect('/register');
+        }
+
+        // Check if phone already exists (if provided)
+        if (phone) {
+            const [phoneRows]: any = await pool.execute(
+                'SELECT PhoneNumber FROM accounts WHERE PhoneNumber = ?',
+                [phone]
+            );
+
+            if (phoneRows.length > 0) {
+                req.flash('error_msg', 'Phone number already registered');
+                return res.redirect('/register');
+            }
+        }
+
+        // Generate salt
+        const salt = crypto.randomBytes(16).toString('hex');
+        
+        // Hash password with salt
+        const hashedPassword = hashPassword(password, salt);
+
+        // Generate verification code
+        const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+        // Insert new user into database
+        const [result]: any = await pool.execute(
+            `INSERT INTO accounts (Username, Password, Salt, Email, PhoneNumber, VerifyCode, IsVerified, CreatedAt) 
+             VALUES (?, ?, ?, ?, ?, ?, FALSE, CURRENT_TIMESTAMP)`,
+            [username, hashedPassword, salt, email, phone || null, verifyCode]
+        );
+
+        // Automatically log in the user after registration
+        (req.session as any).user = {
+            id: result.insertId,
+            username: username,
+            email: email,
+            phone: phone || null,
+            verifyCode: verifyCode
+        };
+
+        // You might want to send verification email here
+        // For now, redirect to dashboard
+        req.flash('success_msg', 'Registration successful! Welcome to our platform.');
+        res.redirect('/dashboard');
+
+    } catch (error) {
+        console.error('Registration error:', error);
+        req.flash('error_msg', 'An error occurred during registration. Please try again.');
+        res.redirect('/register');
+    }
+});
+
 // ============ EMAIL-BASED LOGIN FLOW (DIHAPUS - tidak digunakan lagi) ============
 
 // Request Login Code via Email (DIHAPUS)
@@ -116,14 +225,6 @@ router.post('/request-login-code', (req: Request, res: Response) => {
 router.post('/verify-login-code', (req: Request, res: Response) => {
     req.flash('error_msg', 'Email login system is no longer available. Please use username and password.');
     res.redirect('/login');
-});
-
-// ============ REGISTER FLOW (DIHAPUS) ============
-
-// Register Handler (DIHAPUS)
-router.post('/register', (req: Request, res: Response) => {
-    req.flash('error_msg', 'Registrations are currently closed');
-    res.redirect('/');
 });
 
 // ============ LOGOUT ============
