@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - CENTRA ROLEPLAY</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Dashboard Grid System */
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+            padding: 1.5rem 0;
+        }
+        
+        /* Grid Items */
+        .grid-col-12 { grid-column: span 12; }
+        .grid-col-8 { grid-column: span 8; }
+        .grid-col-6 { grid-column: span 6; }
+        .grid-col-4 { grid-column: span 4; }
+        .grid-col-3 { grid-column: span 3; }
+        
+        /* Card Base */
+        .grid-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .grid-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Card Header */
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f3f4f6;
+        }
+        
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #111827;
+        }
+        
+        .card-title i {
+            color: #000000;
+            font-size: 1.5rem;
+        }
+        
+        /* Stats Cards */
+        .stat-card {
+            text-align: center;
+            padding: 1.5rem;
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, #000000 0%, #333333 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Table Layout for Information */
+        .info-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 1rem 0;
+        }
+        
+        .info-table tr {
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .info-table tr:last-child {
+            border-bottom: none;
+        }
+        
+        .info-table td {
+            padding: 1rem 0;
+            vertical-align: top;
+        }
+        
+        .info-table td:first-child {
+            width: 40%;
+            color: #6b7280;
+            font-weight: 500;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .info-table td:last-child {
+            color: #111827;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        /* Verification Code Display */
+        .verify-code-display {
+            font-family: 'Courier New', monospace;
+            font-size: 1.25rem;
+            font-weight: 600;
+            background: #f9fafb;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-right: 0.5rem;
+        }
+        
+        .copy-btn {
+            background: #000000;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .copy-btn:hover {
+            background: #333333;
+            transform: translateY(-1px);
+        }
+        
+        /* Footer */
+        .simple-footer {
+            background: #000000;
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            text-align: center;
+        }
+        
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .footer-logo i {
+            color: #ffffff;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .footer-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.2s ease;
+        }
+        
+        .footer-link:hover {
+            color: white;
+        }
+        
+        .footer-copyright {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.875rem;
+        }
+        
+        /* Navigation */
+        .dashboard-nav {
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #000000;
+            text-decoration: none;
+        }
+        
+        .nav-brand i {
+            color: #000000;
+        }
+        
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            color: #111827;
+            font-weight: 500;
+        }
+        
+        .nav-user i {
+            color: #6b7280;
+        }
+        
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        /* Navigation Buttons */
+        .nav-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-btn-home {
+            background: #f9fafb;
+            color: #111827;
+            border: 2px solid #e5e7eb;
+        }
+        
+        .nav-btn-home:hover {
+            background: #e5e7eb;
+        }
+        
+        .nav-btn-logout {
+            background: #000000;
+            color: #ffffff;
+            border: 2px solid #000000;
+        }
+        
+        .nav-btn-logout:hover {
+            background: #333333;
+            border-color: #333333;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .grid-col-6,
+            .grid-col-8,
+            .grid-col-4 {
+                grid-column: span 12;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .dashboard-container {
+                gap: 1rem;
+                padding: 1rem 0;
+            }
+            
+            .grid-card {
+                padding: 1rem;
+            }
+            
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-brand {
+                font-size: 1.125rem;
+            }
+            
+            .nav-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .verify-code-display {
+                display: block;
+                margin-bottom: 0.5rem;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #000000;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="dashboard-nav">
+        <div class="container nav-container">
+            <a href="/" class="nav-brand">
+                CENTRA ROLEPLAY
+            </a>
+            
+            <div class="nav-actions">
+                <div class="nav-user">
+                    <i class="fas fa-user"></i>
+                    <span><%= user.username %></span>
+                </div>
+                
+                <a href="/" class="nav-btn nav-btn-home">
+                    <i class="fas fa-home"></i>
+                    Home
+                </a>
+                
+                <a href="/logout" class="nav-btn nav-btn-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Dashboard Content -->
+    <main class="page-wrapper">
+        <div class="container">
+            <div class="dashboard-container">
+                <!-- Welcome Header -->
+                <div class="grid-card grid-col-12 animate-fade-in">
+                    <div class="card-header">
+                        <h1 class="card-title">
+                            <i class="fas fa-tachometer-alt"></i>
+                            Dashboard Overview
+                        </h1>
+                        <div style="color: #6b7280; font-size: 0.875rem;">
+                            Last login: <span id="last-login">Just now</span>
+                        </div>
+                    </div>
+                    <p style="color: #6b7280; line-height: 1.5;">
+                        Welcome back, <strong><%= user.username %></strong>. Here's your account summary and important information.
+                    </p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid-card grid-col-4 stat-card animate-fade-in" style="animation-delay: 0.1s;">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-value" id="server-time">--:--:--</div>
+                    <div class="stat-label">Server Time</div>
+                </div>
+
+                <div class="grid-card grid-col-4 stat-card animate-fade-in" style="animation-delay: 0.2s;">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-value">Verified</div>
+                    <div class="stat-label">Account Status</div>
+                </div>
+
+                <div class="grid-card grid-col-4 stat-card animate-fade-in" style="animation-delay: 0.3s;">
+                    <div class="stat-icon">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <div class="stat-value">Active</div>
+                    <div class="stat-label">Online Status</div>
+                </div>
+
+                <!-- Account Information Table (Termasuk Verification Code) -->
+                <div class="grid-card grid-col-12 animate-fade-in" style="animation-delay: 0.4s;">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-user-circle"></i>
+                            Account Information
+                        </h2>
+                    </div>
+                    
+                    <table class="info-table">
+                        <tr>
+                            <td>Username</td>
+                            <td><%= user.username %></td>
+                        </tr>
+                        <tr>
+                            <td>Email Address</td>
+                            <td><%= user.email %></td>
+                        </tr>
+                        <tr>
+                            <td>Phone Number</td>
+                            <td><%= user.phone %></td>
+                        </tr>
+                        <tr>
+                            <td>Account Type</td>
+                            <td>Player Account</td>
+                        </tr>
+                        <tr>
+                            <td>Registration Date</td>
+                            <td><span id="reg-date">Today</span></td>
+                        </tr>
+                        <tr>
+                            <td>Account Status</td>
+                            <td><span style="color: #059669; font-weight: 600;">Active & Verified</span></td>
+                        </tr>
+                        <!-- Verification Code -->
+                        <% if (user.verifyCode) { %>
+                        <tr>
+                            <td>In-Game Verification Code</td>
+                            <td>
+                                <div class="verify-code-display">
+                                    <%= user.verifyCode %>
+                                </div>
+                                <button class="copy-btn" onclick="copyVerifyCode()">
+                                    <i class="fas fa-copy"></i>
+                                    Copy Code
+                                </button>
+                                <div style="color: #6b7280; font-size: 0.75rem; margin-top: 0.5rem;">
+                                    Use this code to verify your account in-game
+                                </div>
+                            </td>
+                        </tr>
+                        <% } %>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Simple Footer -->
+    <footer class="simple-footer">
+        <div class="container">
+            <div class="footer-content">
+                <a href="/" class="footer-logo">
+                    CENTRA ROLEPLAY
+                </a>
+                
+                <div class="footer-links">
+                    <a href="/" class="footer-link">Home</a>
+                    <a href="/dashboard" class="footer-link">Dashboard</a>
+                    <a href="#" class="footer-link">Support</a>
+                    <a href="/logout" class="footer-link">Logout</a>
+                </div>
+                
+                <div class="footer-copyright">
+                    <p>&copy; <%= new Date().getFullYear() %> CENTRA ROLEPLAY. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Update server time
+        function updateServerTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', {
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            
+            document.getElementById('server-time').textContent = timeString;
+        }
+        
+        setInterval(updateServerTime, 1000);
+        updateServerTime();
+
+        // Copy Verify Code to clipboard
+        function copyVerifyCode() {
+            <% if (user.verifyCode) { %>
+            const verifyCode = '<%= user.verifyCode %>';
+            navigator.clipboard.writeText(verifyCode).then(() => {
+                showToast('Verification code copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                showToast('Failed to copy code', 'error');
+            });
+            <% } else { %>
+            showToast('No verification code available', 'error');
+            <% } %>
+        }
+
+        // Toast notification
+        function showToast(message, type = 'success') {
+            // Remove existing toast
+            const existingToast = document.querySelector('.toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+            
+            // Create new toast
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            
+            let icon = 'fas fa-check-circle';
+            if (type === 'error') icon = 'fas fa-exclamation-circle';
+            if (type === 'info') icon = 'fas fa-info-circle';
+            
+            toast.innerHTML = `
+                <i class="${icon}"></i>
+                <span>${message}</span>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Set registration date
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const regDate = now.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+            document.getElementById('reg-date').textContent = regDate;
+        });
+    </script>
+</body>
+</html>

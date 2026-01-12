@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SA:MP UCP</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+            color: #111827;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Main Container - FIXED CENTERING */
+        .main-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            width: 100%;
+        }
+
+        /* Login Wrapper - FIXED CENTERING */
+        .login-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Login Card */
+        .login-card {
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 420px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .login-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-header {
+            padding: 2.5rem 2rem 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid #f0f0f0;
+            background: #fafafa;
+        }
+
+        .card-title {
+            font-size: 2rem;
+            color: #000;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            font-weight: 700;
+        }
+
+        .card-subtitle {
+            color: #666;
+            font-size: 0.95rem;
+            font-weight: 400;
+            letter-spacing: 0.3px;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.75rem;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            color: #111827;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            color: #111827;
+            background: #ffffff;
+            transition: all 0.3s ease;
+            font-weight: 400;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #000000;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+            background: #fafafa;
+        }
+
+        .form-input::placeholder {
+            color: #999;
+            font-weight: 400;
+        }
+
+        /* Validation Status */
+        .validation-status {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.875rem;
+            margin-top: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            animation: fadeIn 0.3s ease-out;
+            position: relative;
+            width: 100%;
+            z-index: 1;
+            border: 1px solid transparent;
+        }
+
+        .status-checking {
+            color: #555;
+            background: #f8f8f8;
+            border-color: #e0e0e0;
+        }
+
+        .status-available {
+            color: #059669;
+            background: #f0fdf4;
+            border-color: #059669;
+        }
+
+        .status-not-found {
+            color: #dc2626;
+            background: #fef2f2;
+            border-color: #dc2626;
+        }
+
+        .status-icon {
+            font-size: 1rem;
+        }
+
+        /* Input states */
+        .form-input.checking {
+            border-color: #999;
+            background: #fafafa;
+        }
+
+        .form-input.available {
+            border-color: #059669;
+            background: #f0fdf4;
+        }
+
+        .form-input.not-found {
+            border-color: #dc2626;
+            background: #fef2f2;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-top-color: #000000;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Login Button */
+        .login-btn {
+            width: 100%;
+            padding: 1.125rem;
+            background: #000000;
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .login-btn:hover:not(:disabled) {
+            background: #222222;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .login-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .login-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* Alert Styles */
+        .alert {
+            margin: 1.5rem 2rem 0.5rem;
+            padding: 1rem 1.25rem;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: fadeIn 0.3s ease-out;
+            font-size: 0.95rem;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-success {
+            background: #f0fdf4;
+            color: #059669;
+            border: 1px solid #a7f3d0;
+        }
+
+        .alert-icon {
+            font-size: 1.2rem;
+        }
+
+        /* Back Link */
+        .back-link {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .back-link a {
+            color: #666;
+            text-decoration: none;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .back-link a:hover {
+            color: #000;
+            background: #f8f8f8;
+        }
+
+        /* Form padding */
+        .form-content {
+            padding: 2rem 2rem 2.5rem;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1.25rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #000000;
+            text-decoration: none;
+            letter-spacing: 0.5px;
+        }
+
+        /* Footer */
+        .footer {
+            background: #000000;
+            color: white;
+            padding: 2.5rem 0;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        .footer-brand {
+            color: #ffffff;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-decoration: none;
+            margin-bottom: 1rem;
+            display: inline-block;
+            opacity: 0.9;
+        }
+
+        .footer-copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            animation: slideIn 0.3s ease-out;
+            min-width: 300px;
+            max-width: 400px;
+        }
+
+        .toast-error {
+            background: #dc2626;
+        }
+
+        .toast-success {
+            background: #059669;
+        }
+
+        .toast-info {
+            background: #000000;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1.5rem;
+            }
+            
+            .login-card {
+                max-width: 380px;
+            }
+
+            .card-header {
+                padding: 2rem 1.5rem 1.25rem;
+            }
+
+            .card-title {
+                font-size: 1.75rem;
+            }
+
+            .form-content {
+                padding: 1.5rem 1.5rem 2rem;
+            }
+
+            .form-group {
+                margin-bottom: 1.5rem;
+            }
+
+            .alert {
+                margin: 1.25rem 1.5rem 0.5rem;
+                padding: 0.875rem 1rem;
+            }
+
+            .validation-status {
+                font-size: 0.85rem;
+                padding: 0.625rem 0.875rem;
+            }
+
+            .nav-container {
+                padding: 0 1.5rem;
+            }
+
+            .navbar-brand {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 1rem;
+            }
+            
+            .login-card {
+                max-width: 100%;
+                border-radius: 12px;
+            }
+
+            .card-header {
+                padding: 1.75rem 1.25rem 1rem;
+            }
+
+            .card-title {
+                font-size: 1.6rem;
+            }
+
+            .form-content {
+                padding: 1.25rem 1.25rem 1.75rem;
+            }
+
+            .form-input {
+                padding: 0.875rem 1rem;
+            }
+
+            .login-btn {
+                padding: 1rem;
+                font-size: 1rem;
+            }
+
+            .alert {
+                margin: 1rem 1.25rem 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .toast {
+                top: 20px;
+                right: 20px;
+                left: 20px;
+                min-width: auto;
+                max-width: none;
+            }
+
+            .nav-container {
+                padding: 0 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="navbar-brand">
+                CENTRA ROLEPLAY
+            </a>
+            <a href="/" class="navbar-item" style="text-decoration: none; color: #111827; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-home"></i>
+                Home
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="login-wrapper">
+            <div class="login-card animate-fade-in">
+                <div class="card-header">
+                    <h1 class="card-title">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Login
+                    </h1>
+                    <p class="card-subtitle">
+                        Enter your username and password
+                    </p>
+                </div>
+
+                <!-- Alerts -->
+                <% if (error_msg && error_msg.length > 0) { %>
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-circle alert-icon"></i>
+                        <%= error_msg %>
+                    </div>
+                <% } %>
+
+                <% if (success_msg && success_msg.length > 0) { %>
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle alert-icon"></i>
+                        <%= success_msg %>
+                    </div>
+                <% } %>
+
+                <form method="POST" action="/login" id="loginForm">
+                    <div class="form-content">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-user"></i>
+                                Username
+                            </label>
+                            <input type="text" name="username" id="username" class="form-input" required autofocus 
+                                   placeholder="Enter your username"
+                                   oninput="checkUsername()">
+                            <div id="usernameStatus" class="validation-status" style="display: none;"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-lock"></i>
+                                Password
+                            </label>
+                            <input type="password" name="password" id="password" class="form-input" required 
+                                   placeholder="Enter your password">
+                        </div>
+                        
+                        <button type="submit" class="login-btn" id="loginButton">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Login to Account
+                        </button>
+                        
+                        <div class="back-link">
+                            <a href="/">
+                                <i class="fas fa-arrow-left"></i>
+                                Back to Home
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <a href="/" class="footer-brand">
+                CENTRA ROLEPLAY
+            </a>
+            
+            <div class="footer-copyright">
+                <p>
+                    <i class="fas fa-copyright"></i>
+                    SA:MP User Control Panel &copy; 2024. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Variables untuk debounce
+        let checkUsernameTimeout = null;
+        let lastCheckedUsername = '';
+
+        // Fungsi untuk memeriksa username menggunakan API
+        async function checkUsername() {
+            const usernameInput = document.getElementById('username');
+            const username = usernameInput.value.trim();
+            const statusDiv = document.getElementById('usernameStatus');
+            
+            // Reset status
+            usernameInput.classList.remove('checking', 'available', 'not-found');
+            statusDiv.style.display = 'none';
+            
+            // Minimal 3 karakter untuk pengecekan
+            if (username.length < 3) {
+                return;
+            }
+            
+            // Jika username sama dengan yang terakhir dicek, skip
+            if (username === lastCheckedUsername) {
+                return;
+            }
+            
+            // Clear previous timeout
+            if (checkUsernameTimeout) {
+                clearTimeout(checkUsernameTimeout);
+            }
+            
+            // Debounce: tunggu 500ms setelah user berhenti mengetik
+            checkUsernameTimeout = setTimeout(async () => {
+                try {
+                    // Tampilkan status checking
+                    statusDiv.style.display = 'flex';
+                    statusDiv.className = 'validation-status status-checking';
+                    statusDiv.innerHTML = `
+                        <div class="spinner"></div>
+                        <span>Checking username...</span>
+                    `;
+                    usernameInput.classList.add('checking');
+                    
+                    lastCheckedUsername = username;
+                    
+                    // Panggil API yang sudah ada: GET /api/check-username/:username
+                    const response = await fetch(`/api/check-username/${encodeURIComponent(username)}`, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // Update status berdasarkan response
+                    // API mengembalikan: { available: true/false }
+                    // available: true = username TIDAK ditemukan (tidak terdaftar)
+                    // available: false = username ditemukan (terdaftar)
+                    
+                    if (data.available === false) {
+                        // Username DITEMUKAN di database (terdaftar)
+                        statusDiv.className = 'validation-status status-available';
+                        statusDiv.innerHTML = `
+                            <i class="fas fa-check-circle status-icon"></i>
+                            <span>✓ Username found</span>
+                        `;
+                        usernameInput.classList.remove('checking');
+                        usernameInput.classList.add('available');
+                    } else if (data.available === true) {
+                        // Username TIDAK DITEMUKAN (tidak terdaftar)
+                        statusDiv.className = 'validation-status status-not-found';
+                        statusDiv.innerHTML = `
+                            <i class="fas fa-exclamation-circle status-icon"></i>
+                            <span>✗ Username not found</span>
+                        `;
+                        usernameInput.classList.remove('checking');
+                        usernameInput.classList.add('not-found');
+                    }
+                    
+                } catch (error) {
+                    console.error('Error checking username:', error);
+                    // Jika error, sembunyikan status
+                    statusDiv.style.display = 'none';
+                    usernameInput.classList.remove('checking');
+                }
+            }, 500); // Delay 500ms
+        }
+
+        // Auto-hide alerts
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.transition = 'opacity 0.5s ease';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 5000);
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            const usernameField = document.getElementById('username');
+            if (usernameField) {
+                usernameField.focus();
+            }
+            
+            // Handle form submission
+            const loginForm = document.getElementById('loginForm');
+            const loginButton = document.getElementById('loginButton');
+            
+            loginForm.addEventListener('submit', function(e) {
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value.trim();
+                
+                if (!username || !password) {
+                    e.preventDefault();
+                    showToast('Please fill in all fields', 'error');
+                    return;
+                }
+                
+                // Validasi username minimal 3 karakter
+                if (username.length < 3) {
+                    e.preventDefault();
+                    showToast('Username must be at least 3 characters', 'error');
+                    return;
+                }
+                
+                // Cek apakah username sedang dicek
+                const isChecking = document.getElementById('username').classList.contains('checking');
+                if (isChecking) {
+                    e.preventDefault();
+                    showToast('Please wait while we verify your username', 'info');
+                    return;
+                }
+                
+                // Cek apakah username tidak ditemukan
+                const isNotFound = document.getElementById('username').classList.contains('not-found');
+                if (isNotFound) {
+                    e.preventDefault();
+                    showToast('Username not found. Please check your username.', 'error');
+                    return;
+                }
+                
+                // Show loading state
+                const originalText = loginButton.innerHTML;
+                loginButton.innerHTML = `
+                    <div class="spinner" style="width: 20px; height: 20px; border-top-color: white;"></div>
+                    <span>Logging in...</span>
+                `;
+                loginButton.disabled = true;
+                
+                // Reset button jika form submission gagal
+                setTimeout(() => {
+                    loginButton.innerHTML = originalText;
+                    loginButton.disabled = false;
+                }, 3000);
+            });
+        });
+
+        // Fungsi untuk menampilkan toast notification
+        function showToast(message, type = 'info') {
+            // Hapus toast sebelumnya jika ada
+            const existingToast = document.querySelector('.toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+            
+            // Buat toast baru
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            // Set icon berdasarkan type
+            let icon = 'fas fa-info-circle';
+            if (type === 'error') icon = 'fas fa-exclamation-circle';
+            if (type === 'success') icon = 'fas fa-check-circle';
+            
+            toast.innerHTML = `
+                <i class="${icon}"></i>
+                <span>${message}</span>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Auto remove setelah 3 detik
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - SA:MP UCP</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-brand">
+                CENTRA ROLEPLAY
+            </a>
+            <div class="navbar-menu">
+                <a href="/" class="navbar-item">Home</a>
+                <a href="/login" class="btn">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="page-wrapper">
+        <div class="container">
+            <div class="card animate-slide-up" style="max-width: 600px; margin: 40px auto;">
+                <div class="card-header">
+                    <h1>Create Account</h1>
+                    <p>Register for SA:MP UCP Panel</p>
+                </div>
+
+                <% if (success_msg && success_msg.length > 0) { %>
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle alert-icon"></i>
+                        <%= success_msg %>
+                    </div>
+                <% } %>
+
+                <% if (error_msg && error_msg.length > 0) { %>
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-circle alert-icon"></i>
+                        <%= error_msg %>
+                    </div>
+                <% } %>
+
+                <form action="/register" method="POST" id="registerForm">
+                    <div class="form-group">
+                        <label for="username" class="form-label">Username *</label>
+                        <div style="position: relative;">
+                            <input type="text" id="username" name="username" class="form-control" 
+                                   placeholder="Choose a username (3-24 characters)" required
+                                   minlength="3" maxlength="24" pattern="[a-zA-Z0-9_]+" autocomplete="username">
+                            <i class="fas fa-user form-control-icon"></i>
+                        </div>
+                        <div id="username-feedback" style="font-size: 0.85rem; margin-top: 5px;"></div>
+                        <div style="font-size: 0.85rem; color: #666; margin-top: 5px;">
+                            Only letters, numbers, and underscores allowed
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email Address *</label>
+                        <div style="position: relative;">
+                            <input type="email" id="email" name="email" class="form-control" required
+                                   placeholder="your.email@example.com" autocomplete="email">
+                            <i class="fas fa-envelope form-control-icon"></i>
+                        </div>
+                        <div id="email-feedback" style="font-size: 0.85rem; margin-top: 5px;"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone" class="form-label">Phone Number *</label>
+                        <div style="position: relative;">
+                            <input type="tel" id="phone" name="phone" class="form-control" required 
+                                   pattern="[0-9+\-\s]+" placeholder="+628123456789" autocomplete="tel">
+                            <i class="fas fa-phone form-control-icon"></i>
+                        </div>
+                        <div id="phone-feedback" style="font-size: 0.85rem; margin-top: 5px;"></div>
+                    </div>
+
+                    <div class="alert" style="background: #f8f9fa; border: 1px solid #ddd;">
+                        <i class="fas fa-info-circle" style="color: #666;"></i>
+                        <span style="color: #666; font-size: 0.9rem;">
+                            After registration, you will receive an email with your in-game verification code.
+                            Your account will be immediately activated.
+                        </span>
+                    </div>
+
+                    <button type="submit" class="btn btn-block mt-4" id="submitBtn">
+                        <i class="fas fa-user-plus btn-icon"></i>
+                        Create Account
+                    </button>
+                </form>
+
+                <div class="text-center mt-4">
+                    <p style="color: #666; margin-bottom: 10px;">Already have an account?</p>
+                    <a href="/login" class="btn btn-outline" style="width: 100%;">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Login Here
+                    </a>
+                </div>
+
+                <div class="text-center mt-3">
+                    <p style="font-size: 0.9rem; color: #999;">
+                        <i class="fas fa-shield-alt"></i>
+                        Secure instant registration system
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <a href="/" class="footer-brand">CENTRA ROLEPLAY</a>
+            <div class="footer-links">
+                <a href="/" class="footer-link">Home</a>
+                <a href="/login" class="footer-link">Login</a>
+                <a href="/register" class="footer-link">Register</a>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            <p>SA:MP User Control Panel &copy; <%= new Date().getFullYear() %>. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Real-time validation functions
+        async function checkUsernameAvailability(username) {
+            if (username.length < 3) return false;
+            
+            try {
+                const response = await fetch(`/api/check-username/${encodeURIComponent(username)}`);
+                const data = await response.json();
+                return data.available;
+            } catch (error) {
+                console.error('Error checking username:', error);
+                return false;
+            }
+        }
+
+        async function checkEmailAvailability(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) return false;
+            
+            try {
+                const response = await fetch(`/api/check-email/${encodeURIComponent(email)}`);
+                const data = await response.json();
+                return data.available;
+            } catch (error) {
+                console.error('Error checking email:', error);
+                return false;
+            }
+        }
+
+        async function checkPhoneAvailability(phone) {
+            if (phone.length < 10) return false;
+            
+            try {
+                const response = await fetch(`/api/check-phone/${encodeURIComponent(phone)}`);
+                const data = await response.json();
+                return data.available;
+            } catch (error) {
+                console.error('Error checking phone:', error);
+                return false;
+            }
+        }
+
+        // Update feedback display
+        function updateFeedback(elementId, message, isSuccess) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = message;
+                element.style.color = isSuccess ? '#28a745' : '#dc3545';
+            }
+        }
+
+        // Event listeners for real-time validation
+        document.getElementById('username').addEventListener('blur', async function() {
+            const username = this.value.trim();
+            const feedbackId = 'username-feedback';
+            
+            if (!username) {
+                updateFeedback(feedbackId, '', true);
+                return;
+            }
+            
+            // Check pattern
+            const usernameRegex = /^[a-zA-Z0-9_]+$/;
+            if (!usernameRegex.test(username)) {
+                updateFeedback(feedbackId, 'Only letters, numbers, and underscores allowed', false);
+                return;
+            }
+            
+            // Check length
+            if (username.length < 3 || username.length > 24) {
+                updateFeedback(feedbackId, 'Username must be 3-24 characters', false);
+                return;
+            }
+            
+            // Check availability
+            updateFeedback(feedbackId, 'Checking availability...', true);
+            const isAvailable = await checkUsernameAvailability(username);
+            
+            if (isAvailable) {
+                updateFeedback(feedbackId, '✓ Username available', true);
+            } else {
+                updateFeedback(feedbackId, '✗ Username already taken', false);
+            }
+        });
+
+        document.getElementById('email').addEventListener('blur', async function() {
+            const email = this.value.trim();
+            const feedbackId = 'email-feedback';
+            
+            if (!email) {
+                updateFeedback(feedbackId, '', true);
+                return;
+            }
+            
+            // Check email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                updateFeedback(feedbackId, 'Invalid email format', false);
+                return;
+            }
+            
+            // Check availability
+            updateFeedback(feedbackId, 'Checking availability...', true);
+            const isAvailable = await checkEmailAvailability(email);
+            
+            if (isAvailable) {
+                updateFeedback(feedbackId, '✓ Email available', true);
+            } else {
+                updateFeedback(feedbackId, '✗ Email already registered', false);
+            }
+        });
+
+        document.getElementById('phone').addEventListener('blur', async function() {
+            const phone = this.value.trim();
+            const feedbackId = 'phone-feedback';
+            
+            if (!phone) {
+                updateFeedback(feedbackId, '', true);
+                return;
+            }
+            
+            // Check phone format
+            const phoneRegex = /^[0-9+\-\s]+$/;
+            if (!phoneRegex.test(phone)) {
+                updateFeedback(feedbackId, 'Invalid phone number', false);
+                return;
+            }
+            
+            // Check length
+            if (phone.replace(/[^0-9]/g, '').length < 10) {
+                updateFeedback(feedbackId, 'Phone number too short', false);
+                return;
+            }
+            
+            // Check availability
+            updateFeedback(feedbackId, 'Checking availability...', true);
+            const isAvailable = await checkPhoneAvailability(phone);
+            
+            if (isAvailable) {
+                updateFeedback(feedbackId, '✓ Phone number available', true);
+            } else {
+                updateFeedback(feedbackId, '✗ Phone number already registered', false);
+            }
+        });
+
+        // Form submission validation
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const submitBtn = document.getElementById('submitBtn');
+            
+            // Basic validation
+            if (!username || !email || !phone) {
+                alert('Please fill in all required fields');
+                return false;
+            }
+            
+            // Username validation
+            const usernameRegex = /^[a-zA-Z0-9_]+$/;
+            if (!usernameRegex.test(username)) {
+                alert('Username can only contain letters, numbers, and underscores');
+                return false;
+            }
+            
+            if (username.length < 3 || username.length > 24) {
+                alert('Username must be 3-24 characters');
+                return false;
+            }
+            
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('Please enter a valid email address');
+                return false;
+            }
+            
+            // Phone validation
+            const phoneRegex = /^[0-9+\-\s]+$/;
+            if (!phoneRegex.test(phone)) {
+                alert('Please enter a valid phone number');
+                return false;
+            }
+            
+            // Check availability before submitting
+            submitBtn.innerHTML = '<div class="loading"></div> Checking...';
+            submitBtn.disabled = true;
+            
+            try {
+                const [usernameAvailable, emailAvailable, phoneAvailable] = await Promise.all([
+                    checkUsernameAvailability(username),
+                    checkEmailAvailability(email),
+                    checkPhoneAvailability(phone)
+                ]);
+                
+                if (!usernameAvailable) {
+                    alert('Username is already taken');
+                    submitBtn.innerHTML = '<i class="fas fa-user-plus btn-icon"></i> Create Account';
+                    submitBtn.disabled = false;
+                    return false;
+                }
+                
+                if (!emailAvailable) {
+                    alert('Email is already registered');
+                    submitBtn.innerHTML = '<i class="fas fa-user-plus btn-icon"></i> Create Account';
+                    submitBtn.disabled = false;
+                    return false;
+                }
+                
+                if (!phoneAvailable) {
+                    alert('Phone number is already registered');
+                    submitBtn.innerHTML = '<i class="fas fa-user-plus btn-icon"></i> Create Account';
+                    submitBtn.disabled = false;
+                    return false;
+                }
+                
+                // All checks passed, submit form
+                submitBtn.innerHTML = '<div class="loading"></div> Creating Account...';
+                this.submit();
+                
+            } catch (error) {
+                console.error('Validation error:', error);
+                alert('Error checking availability. Please try again.');
+                submitBtn.innerHTML = '<i class="fas fa-user-plus btn-icon"></i> Create Account';
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Auto-hide alerts
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.transition = 'opacity 0.5s ease';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 5000);
+    </script>
+</body>
+</html>

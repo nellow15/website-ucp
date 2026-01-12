@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SA:MP UCP - Home</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Video Background Styles */
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+        
+        .video-background video {
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+        }
+        
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            z-index: -1;
+        }
+        
+        /* Content Styling */
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+        
+        /* Hero Card */
+        .hero-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 1);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: #000;
+            margin-bottom: 1rem;
+        }
+        
+        /* Hero Text */
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #000 0%, #333 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 2rem;
+            max-width: 600px;
+        }
+        
+        /* Button Groups */
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        /* Navigation */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar-brand {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #000000;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .navbar-menu {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .navbar-item {
+            color: #111827;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .navbar-item:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        
+        .navbar-item.active {
+            background: rgba(0, 0, 0, 0.1);
+            font-weight: 500;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: #000;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background: #333;
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #000;
+            color: #000;
+        }
+        
+        .btn-outline:hover {
+            background: #000;
+            color: white;
+        }
+        
+        /* Dashboard Stats */
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .stat-card {
+            background: rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            border-left: 4px solid #000;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            color: #000;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        /* Cookie Consent Banner */
+        .cookie-consent {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 1.5rem 2rem;
+            z-index: 9999;
+            display: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .cookie-consent.show {
+            display: block;
+            animation: slideUp 0.5s ease-out;
+        }
+        
+        .cookie-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        
+        .cookie-text {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .cookie-text h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.1rem;
+            color: white;
+        }
+        
+        .cookie-text p {
+            margin: 0;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .cookie-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .cookie-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .cookie-btn.accept {
+            background: #000;
+            color: white;
+        }
+        
+        .cookie-btn.accept:hover {
+            background: #333;
+        }
+        
+        .cookie-btn.reject {
+            background: transparent;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .cookie-btn.reject:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* FOOTER - IMPROVED DESIGN */
+        .footer {
+            background: linear-gradient(135deg, #000 0%, #111 100%);
+            color: white;
+            padding: 4rem 0 2rem 0;
+            margin-top: auto;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        
+        .footer-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-decoration: none;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-description {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            font-size: 0.95rem;
+            max-width: 300px;
+        }
+        
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .social-link:hover {
+            background: #000;
+            transform: translateY(-3px);
+        }
+        
+        .footer-links-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+        
+        .footer-links-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .footer-column-title {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .footer-column-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: white;
+        }
+        
+        .footer-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0;
+        }
+        
+        .footer-link:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .footer-link i {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        
+        .footer-copyright {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+        
+        .footer-legal {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .footer-legal-link {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-legal-link:hover {
+            color: white;
+        }
+        
+        /* Animations */
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .btn-group .btn {
+                width: 100%;
+            }
+            
+            .nav-container {
+                padding: 0 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .navbar-menu {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .cookie-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .cookie-actions {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .footer {
+                padding: 3rem 0 1.5rem 0;
+            }
+            
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .footer-links-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            
+            .footer-legal {
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-card {
+                margin: 0 1rem;
+                padding: 2rem 1.5rem !important;
+            }
+            
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .cookie-actions {
+                flex-direction: column;
+            }
+            
+            .cookie-btn {
+                width: 100%;
+            }
+        }
+        
+        /* Utility Classes */
+        .text-center {
+            text-align: center;
+        }
+        
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-3 { margin-top: 0.75rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-5 { margin-top: 1.5rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-3 { margin-bottom: 0.75rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-5 { margin-bottom: 1.5rem; }
+        .pt-4 { padding-top: 1rem; }
+        .pt-5 { padding-top: 1.5rem; }
+        
+        /* Alert Styles */
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: fadeIn 0.3s ease-out;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .alert-success {
+            background: rgba(5, 150, 105, 0.1);
+            color: #059669;
+            border-left: 4px solid #059669;
+        }
+        
+        .alert-error {
+            background: rgba(220, 38, 38, 0.1);
+            color: #dc2626;
+            border-left: 4px solid #dc2626;
+        }
+        
+        .alert-icon {
+            font-size: 1.2rem;
+        }
+        
+        /* Container for main content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Cookie Consent Banner -->
+    <div id="cookieConsent" class="cookie-consent">
+        <div class="cookie-content">
+            <div class="cookie-text">
+                <h3><i class="fas fa-cookie-bite"></i> We Use Cookies</h3>
+                <p>
+                    We use essential cookies to ensure our website works properly, analyze site usage, 
+                    and assist in our marketing efforts. By clicking "Accept All", you agree to our use of cookies. 
+                    <a href="/privacy" style="color: #4bcffa; text-decoration: none;">Learn more</a>
+                </p>
+            </div>
+            <div class="cookie-actions">
+                <button class="cookie-btn reject" id="rejectCookies">
+                    <i class="fas fa-times"></i> Essential Only
+                </button>
+                <button class="cookie-btn accept" id="acceptCookies">
+                    <i class="fas fa-check"></i> Accept All
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Background -->
+    <div class="video-background">
+        <video autoplay muted loop playsinline poster="/assets/background-poster.jpg">
+            <source src="/assets/background.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    <div class="video-overlay"></div>
+
+    <div class="content-wrapper">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="/" class="navbar-brand">
+                    CENTRA ROLEPLAY
+                </a>
+                <div class="navbar-menu">
+                    <% if (user) { %>
+                        <span class="navbar-item">
+                            <i class="fas fa-user"></i>
+                            <%= user.username %>
+                        </span>
+                        <a href="/dashboard" class="navbar-item">
+                            <i class="fas fa-tachometer-alt"></i>
+                            Dashboard
+                        </a>
+                        <a href="/logout" class="btn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Logout
+                        </a>
+                    <% } else { %>
+                        <a href="/" class="navbar-item active">
+                            <i class="fas fa-home"></i>
+                            Home
+                        </a>
+                        <a href="/login" class="navbar-item">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Login
+                        </a>
+                    <% } %>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <div class="hero-card animate-fade-in" style="max-width: 800px; margin: 0 auto; padding: 3rem;">
+                    <div class="text-center">
+                        <h1 class="hero-title">SA:MP User Control Panel</h1>
+                        <p class="hero-subtitle">
+                            Professional account management system for San Andreas Multiplayer with enhanced security
+                        </p>
+                    </div>
+
+                    <!-- Alerts -->
+                    <% if (success_msg && success_msg.length > 0) { %>
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle alert-icon"></i>
+                            <%= success_msg %>
+                        </div>
+                    <% } %>
+
+                    <% if (error_msg && error_msg.length > 0) { %>
+                        <div class="alert alert-error">
+                            <i class="fas fa-exclamation-circle alert-icon"></i>
+                            <%= error_msg %>
+                        </div>
+                    <% } %>
+
+                    <% if (!user) { %>
+                        <!-- Welcome Section for Guests -->
+                        <div class="text-center mt-4">
+                            <h2 class="mb-3" style="font-size: 1.8rem; color: #333; font-weight: 600;">
+                                Welcome to CENTRA ROLEPLAY
+                            </h2>
+                            <p class="mb-4" style="color: #666; max-width: 600px; margin: 0 auto 2rem auto;">
+                                Access your gaming account with our secure login system. 
+                                Manage your SA:MP experience with ease and security.
+                            </p>
+                            
+                            <div class="btn-group">
+                                <a href="/login" class="btn" style="padding: 1rem 2.5rem;">
+                                    <i class="fas fa-sign-in-alt btn-icon"></i>
+                                    Login to Your Account
+                                </a>
+                            </div>
+                            
+                            <p class="mt-4" style="color: #999; font-size: 0.9rem;">
+                                Need help? <a href="/contact" style="color: #000; text-decoration: none; font-weight: 500;">Contact Support</a>
+                            </p>
+                        </div>
+
+                        <!-- Features Grid -->
+                        <div class="feature-grid">
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <h3 style="color: #000; margin-bottom: 0.5rem; font-weight: 600;">
+                                    Secure Login
+                                </h3>
+                                <p style="color: #666; font-size: 0.9rem;">
+                                    Advanced security with real-time username verification
+                                </p>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                </div>
+                                <h3 style="color: #000; margin-bottom: 0.5rem; font-weight: 600;">
+                                    Dashboard Access
+                                </h3>
+                                <p style="color: #666; font-size: 0.9rem;">
+                                    Manage your account and view stats from one place
+                                </p>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <h3 style="color: #000; margin-bottom: 0.5rem; font-weight: 600;">
+                                    Game Statistics
+                                </h3>
+                                <p style="color: #666; font-size: 0.9rem;">
+                                    Track your gaming progress and achievements
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- How It Works -->
+                        <div class="mt-5 pt-4" style="border-top: 1px solid rgba(0, 0, 0, 0.1);">
+                            <h3 class="text-center mb-4" style="color: #333; font-weight: 600;">Getting Started</h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
+                                <div style="text-align: center;">
+                                    <div style="width: 60px; height: 60px; background: #000; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-weight: bold; font-size: 1.2rem;">1</div>
+                                    <h4 style="color: #000; margin-bottom: 0.5rem; font-weight: 600;">Login</h4>
+                                    <p style="color: #666; font-size: 0.9rem;">Use your existing account credentials</p>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="width: 60px; height: 60px; background: #000; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-weight: bold; font-size: 1.2rem;">2</div>
+                                    <h4 style="color: #000; margin-bottom: 0.5rem; font-weight: 600;">Access Dashboard</h4>
+                                    <p style="color: #666; font-size: 0.9rem;">Manage your account settings</p>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="width: 60px; height: 60px; background: #000; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-weight: bold; font-size: 1.2rem;">3</div>
+                                    <h4 style="color: #000; margin-bottom: 0.5rem; font-weight: 600;">Play</h4>
+                                    <p style="color: #666; font-size: 0.9rem;">Use verification code to access game</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    <% } else { %>
+                        <!-- Welcome Section for Logged-in Users -->
+                        <div class="text-center mt-4">
+                            <div style="width: 100px; height: 100px; background: #000; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; font-size: 2.5rem;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            
+                            <h2 class="mb-2" style="font-size: 2rem; color: #333; font-weight: 600;">
+                                Welcome Back, <%= user.username %>!
+                            </h2>
+                            
+                            <p class="mb-4" style="color: #666; max-width: 500px; margin: 0 auto 2rem;">
+                                Your account is ready to go. Access all your SA:MP UCP features from the dashboard.
+                            </p>
+                            
+                            <div class="btn-group">
+                                <a href="/dashboard" class="btn" style="padding: 1rem 2.5rem;">
+                                    <i class="fas fa-tachometer-alt btn-icon"></i>
+                                    Go to Dashboard
+                                </a>
+                                <% if (user.verifyCode) { %>
+                                <button class="btn btn-outline" onclick="copyVerifyCode()" style="padding: 1rem 2.5rem;">
+                                    <i class="fas fa-copy btn-icon"></i>
+                                    Copy Game Code
+                                </button>
+                                <% } %>
+                            </div>
+                            
+                            <% if (user.verifyCode) { %>
+                            <div class="mt-4 p-3" style="background: rgba(0, 0, 0, 0.05); border-radius: 8px; border-left: 4px solid #000;">
+                                <p style="margin: 0; color: #333;">
+                                    <i class="fas fa-gamepad" style="color: #000;"></i>
+                                    <strong>Game Verification Code:</strong> 
+                                    <span id="verifyCode" style="font-family: monospace; font-weight: bold; color: #000;">
+                                        <%= user.verifyCode %>
+                                    </span>
+                                </p>
+                            </div>
+                            <% } %>
+                        </div>
+
+                        <!-- Quick Stats -->
+                        <div class="dashboard-stats">
+                            <div class="stat-card">
+                                <div class="stat-value">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                                <div class="stat-label">Account Verified</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="stat-label"><%= user.email %></div>
+                            </div>
+                            <% if (user.phone) { %>
+                            <div class="stat-card">
+                                <div class="stat-value">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div class="stat-label"><%= user.phone %></div>
+                            </div>
+                            <% } %>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </main>
+
+        <!-- FOOTER - IMPROVED DESIGN -->
+        <footer class="footer">
+            <div class="footer-container">
+                <div class="footer-grid">
+                    <!-- Brand Column -->
+                    <div class="footer-brand">
+                        <a href="/" class="footer-logo">
+                            CENTRA ROLEPLAY
+                        </a>
+                        <p class="footer-description">
+                            Professional SA:MP User Control Panel providing secure account management 
+                            and enhanced gaming experience for San Andreas Multiplayer community.
+                        </p>
+                        <div class="footer-social">
+                            <a href="#" class="social-link" aria-label="Discord">
+                                <i class="fab fa-discord"></i>
+                            </a>
+                            <a href="#" class="social-link" aria-label="GitHub">
+                                <i class="fab fa-github"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Links Columns -->
+                    <div class="footer-links-container">
+                        <div class="footer-links-column">
+                            <h4 class="footer-column-title">Navigation</h4>
+                            <a href="/" class="footer-link">
+                                <i class="fas fa-home"></i>
+                                Home
+                            </a>
+                            <a href="/login" class="footer-link">
+                                <i class="fas fa-sign-in-alt"></i>
+                                Login
+                            </a>
+                            <% if (user) { %>
+                            <a href="/dashboard" class="footer-link">
+                                <i class="fas fa-tachometer-alt"></i>
+                                Dashboard
+                            </a>
+                            <% } %>
+                            <a href="/about" class="footer-link">
+                                <i class="fas fa-info-circle"></i>
+                                About Us
+                            </a>
+                        </div>
+
+                        <div class="footer-links-column">
+                            <h4 class="footer-column-title">Resources</h4>
+                            <a href="/guides" class="footer-link">
+                                <i class="fas fa-book"></i>
+                                Guides
+                            </a>
+                            <a href="/faq" class="footer-link">
+                                <i class="fas fa-question-circle"></i>
+                                FAQ
+                            </a>
+                            <a href="/support" class="footer-link">
+                                <i class="fas fa-headset"></i>
+                                Support
+                            </a>
+                            <a href="/status" class="footer-link">
+                                <i class="fas fa-server"></i>
+                                Server Status
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Bar -->
+                <div class="footer-bottom">
+                    <div class="footer-copyright">
+                        <p>
+                            <i class="fas fa-copyright"></i>
+                            2025 CENTRA ROLEPLAY. All rights reserved.
+                        </p>
+                    </div>
+                    <div class="footer-legal">
+                        <a href="/privacy" class="footer-legal-link">Privacy Policy</a>
+                        <a href="/terms" class="footer-legal-link">Terms of Service</a>
+                        <a href="/cookies" class="footer-legal-link">Cookie Policy</a>
+                        <a href="/legal" class="footer-legal-link">Legal Notice</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Cookie Consent Management
+        document.addEventListener('DOMContentLoaded', function() {
+            const cookieConsent = document.getElementById('cookieConsent');
+            const acceptBtn = document.getElementById('acceptCookies');
+            const rejectBtn = document.getElementById('rejectCookies');
+            
+            // Check if cookie consent has been given
+            const cookiesAccepted = localStorage.getItem('cookiesAccepted');
+            
+            if (!cookiesAccepted) {
+                // Show cookie consent after 1 second
+                setTimeout(() => {
+                    cookieConsent.classList.add('show');
+                }, 1000);
+            }
+            
+            // Accept All Cookies
+            acceptBtn.addEventListener('click', function() {
+                localStorage.setItem('cookiesAccepted', 'all');
+                localStorage.setItem('cookiesConsentDate', new Date().toISOString());
+                cookieConsent.classList.remove('show');
+                
+                // Set essential cookies
+                setEssentialCookies();
+                // Set analytics cookies
+                setAnalyticsCookies();
+                
+                showToast('All cookies accepted. Thank you!', 'success');
+            });
+            
+            // Reject All (Essential Only)
+            rejectBtn.addEventListener('click', function() {
+                localStorage.setItem('cookiesAccepted', 'essential');
+                localStorage.setItem('cookiesConsentDate', new Date().toISOString());
+                cookieConsent.classList.remove('show');
+                
+                // Set only essential cookies
+                setEssentialCookies();
+                
+                showToast('Essential cookies set. Thank you!', 'info');
+            });
+            
+            // Set essential cookies (always needed)
+            function setEssentialCookies() {
+                const expires = new Date();
+                expires.setFullYear(expires.getFullYear() + 1);
+                
+                // Session cookie
+                document.cookie = `session_consent=true; expires=${expires.toUTCString()}; path=/; Secure; SameSite=Strict`;
+                
+                // CSRF token cookie (if needed)
+                document.cookie = `csrf_consent=true; expires=${expires.toUTCString()}; path=/; Secure; SameSite=Strict`;
+            }
+            
+            // Set analytics/marketing cookies
+            function setAnalyticsCookies() {
+                const expires = new Date();
+                expires.setFullYear(expires.getFullYear() + 1);
+                
+                // Analytics cookie
+                document.cookie = `analytics_consent=true; expires=${expires.toUTCString()}; path=/; Secure; SameSite=Strict`;
+                
+                // Marketing cookie
+                document.cookie = `marketing_consent=true; expires=${expires.toUTCString()}; path=/; Secure; SameSite=Strict`;
+                
+                // Here you would typically initialize Google Analytics or other tracking
+                console.log('Analytics and marketing cookies set');
+            }
+            
+            // Check existing cookies on page load
+            checkCookies();
+        });
+        
+        function checkCookies() {
+            const cookies = document.cookie.split(';');
+            const cookieData = {};
+            
+            cookies.forEach(cookie => {
+                const [name, value] = cookie.trim().split('=');
+                cookieData[name] = value;
+            });
+            
+            // You can use this data for various purposes
+            console.log('Current cookies:', cookieData);
+        }
+        
+        // Copy Verify Code to clipboard
+        function copyVerifyCode() {
+            <% if (user && user.verifyCode) { %>
+            const verifyCode = '<%= user.verifyCode %>';
+            navigator.clipboard.writeText(verifyCode).then(() => {
+                showToast(`Copied to clipboard: ${verifyCode}`, 'success');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showToast('Failed to copy verify code', 'error');
+            });
+            <% } else { %>
+            showToast('No verify code available', 'info');
+            <% } %>
+        }
+
+        // Auto-hide alerts
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.transition = 'opacity 0.5s ease';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 5000);
+
+        // Video fallback for unsupported browsers
+        document.addEventListener('DOMContentLoaded', function() {
+            const video = document.querySelector('.video-background video');
+            if (video && video.paused) {
+                video.play().catch(e => {
+                    console.log('Video autoplay failed:', e);
+                    // Fallback to poster image
+                    const poster = video.getAttribute('poster');
+                    if (poster) {
+                        document.querySelector('.video-background').style.backgroundImage = `url(${poster})`;
+                        document.querySelector('.video-background').style.backgroundSize = 'cover';
+                        document.querySelector('.video-background').style.backgroundPosition = 'center';
+                    }
+                });
+            }
+        });
+
+        // Toast notification function
+        function showToast(message, type = 'info') {
+            // Remove existing toast
+            const existingToast = document.querySelector('.toast-notification');
+            if (existingToast) {
+                existingToast.remove();
+            }
+            
+            // Create toast
+            const toast = document.createElement('div');
+            toast.className = `toast-notification toast-${type}`;
+            toast.style.cssText = `
+                position: fixed;
+                top: 30px;
+                right: 30px;
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                color: white;
+                font-weight: 500;
+                z-index: 9999;
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+                animation: slideIn 0.3s ease-out;
+                min-width: 300px;
+                max-width: 400px;
+            `;
+            
+            // Set background based on type
+            if (type === 'success') toast.style.background = '#059669';
+            else if (type === 'error') toast.style.background = '#dc2626';
+            else toast.style.background = '#000000';
+            
+            // Set icon
+            let icon = 'fas fa-info-circle';
+            if (type === 'error') icon = 'fas fa-exclamation-circle';
+            if (type === 'success') icon = 'fas fa-check-circle';
+            
+            toast.innerHTML = `
+                <i class="${icon}"></i>
+                <span>${message}</span>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

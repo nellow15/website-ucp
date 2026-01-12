@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter Verification Code - SA:MP UCP</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-brand">
+                <i class="fas fa-gamepad brand-icon"></i>
+                SA:MP UCP
+            </a>
+            <div class="navbar-menu">
+                <a href="/" class="navbar-item">Home</a>
+                <a href="/register" class="btn">Register</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="page-wrapper">
+        <div class="container">
+            <div class="card animate-slide-up" style="max-width: 500px; margin: 40px auto;">
+                <div class="card-header">
+                    <h1>Verify Login</h1>
+                    <p>Enter the 6-digit code sent to your email</p>
+                </div>
+
+                <% if (success_msg && success_msg.length > 0) { %>
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle alert-icon"></i>
+                        <%= success_msg %>
+                    </div>
+                <% } %>
+
+                <% if (error_msg && error_msg.length > 0) { %>
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-circle alert-icon"></i>
+                        <%= error_msg %>
+                    </div>
+                <% } %>
+
+                <div class="text-center mb-4">
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: var(--radius); margin-bottom: 20px;">
+                        <i class="fas fa-envelope" style="font-size: 3rem; color: #000; margin-bottom: 15px;"></i>
+                        <p style="color: #666; margin-bottom: 5px;">Code sent to:</p>
+                        <p style="font-weight: 600; color: #000; font-size: 1.1rem;"><%= email %></p>
+                    </div>
+                </div>
+
+                <form action="/verify-login-code" method="POST" id="codeForm">
+                    <div class="code-input-container">
+                        <input type="text" name="code1" class="code-input" maxlength="1" pattern="[0-9]" 
+                               onkeyup="moveToNext(this, 'code2')" autofocus required>
+                        <input type="text" name="code2" class="code-input" maxlength="1" pattern="[0-9]"
+                               onkeyup="moveToNext(this, 'code3')" required>
+                        <input type="text" name="code3" class="code-input" maxlength="1" pattern="[0-9]"
+                               onkeyup="moveToNext(this, 'code4')" required>
+                        <input type="text" name="code4" class="code-input" maxlength="1" pattern="[0-9]"
+                               onkeyup="moveToNext(this, 'code5')" required>
+                        <input type="text" name="code5" class="code-input" maxlength="1" pattern="[0-9]"
+                               onkeyup="moveToNext(this, 'code6')" required>
+                        <input type="text" name="code6" class="code-input" maxlength="1" pattern="[0-9]" required>
+                        <input type="hidden" name="code" id="fullCode">
+                    </div>
+
+                    <div class="text-center mt-4 mb-4">
+                        <p style="color: #666; font-size: 0.9rem;">
+                            <i class="fas fa-clock"></i>
+                            Code expires in 15 minutes
+                        </p>
+                    </div>
+
+                    <button type="submit" class="btn btn-block">
+                        <i class="fas fa-sign-in-alt btn-icon"></i>
+                        Verify & Login
+                    </button>
+                </form>
+
+                <div class="text-center mt-4">
+                    <p style="color: #666; margin-bottom: 10px;">Didn't receive the code?</p>
+                    <a href="/login" class="btn btn-outline" style="width: 100%;">
+                        <i class="fas fa-redo"></i>
+                        Request New Code
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <a href="/" class="footer-brand">SA:MP UCP</a>
+            <div class="footer-links">
+                <a href="/" class="footer-link">Home</a>
+                <a href="/login" class="footer-link">Login</a>
+                <a href="/register" class="footer-link">Register</a>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            <p>SA:MP User Control Panel &copy; <%= new Date().getFullYear() %>. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Combine individual code inputs into one hidden input
+        function combineCode() {
+            const code1 = document.querySelector('input[name="code1"]').value;
+            const code2 = document.querySelector('input[name="code2"]').value;
+            const code3 = document.querySelector('input[name="code3"]').value;
+            const code4 = document.querySelector('input[name="code4"]').value;
+            const code5 = document.querySelector('input[name="code5"]').value;
+            const code6 = document.querySelector('input[name="code6"]').value;
+            
+            const fullCode = code1 + code2 + code3 + code4 + code5 + code6;
+            document.getElementById('fullCode').value = fullCode;
+            
+            return fullCode.length === 6;
+        }
+
+        // Auto-move to next input
+        function moveToNext(current, nextFieldName) {
+            if (current.value.length >= current.maxLength) {
+                const nextField = document.querySelector(`input[name="${nextFieldName}"]`);
+                if (nextField) {
+                    nextField.focus();
+                }
+            }
+            
+            // Update input style
+            if (current.value) {
+                current.classList.add('filled');
+            } else {
+                current.classList.remove('filled');
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('codeForm').addEventListener('submit', function(e) {
+            if (!combineCode()) {
+                e.preventDefault();
+                alert('Please enter all 6 digits of the verification code');
+                return false;
+            }
+            
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.innerHTML = '<div class="loading"></div> Verifying...';
+            submitBtn.disabled = true;
+            
+            return true;
+        });
+
+        // Auto-hide alerts after 5 seconds
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.transition = 'opacity 0.5s ease';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 5000);
+
+        // Auto-focus first input
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('input[name="code1"]').focus();
+        });
+    </script>
+</body>
+</html>
