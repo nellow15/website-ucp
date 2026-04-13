@@ -5,6 +5,7 @@ import flash from 'connect-flash';
 import { config } from 'dotenv';
 import authRoutes from './routes/auth';
 import apiRoutes from './routes/api';
+import verifyRoutes from './routes/verifyRoutes';
 import { connectDB } from './database';
 
 // Load environment variables
@@ -50,6 +51,7 @@ app.set('views', path.join(__dirname, 'views'));
 // Routes
 app.use('/', authRoutes);
 app.use('/api', apiRoutes);
+app.use('/', verifyRoutes);
 
 // Home route
 app.get('/', (req, res) => {

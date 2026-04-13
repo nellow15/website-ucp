@@ -10,6 +10,7 @@ const connect_flash_1 = __importDefault(require("connect-flash"));
 const dotenv_1 = require("dotenv");
 const auth_1 = __importDefault(require("./routes/auth"));
 const api_1 = __importDefault(require("./routes/api"));
+const verifyRoutes_1 = __importDefault(require("./routes/verifyRoutes"));
 const database_1 = require("./database");
 // Load environment variables
 (0, dotenv_1.config)();
@@ -46,6 +47,7 @@ app.set('views', path_1.default.join(__dirname, 'views'));
 // Routes
 app.use('/', auth_1.default);
 app.use('/api', api_1.default);
+app.use('/verify', verifyRoutes_1.default);
 // Home route
 app.get('/', (req, res) => {
     res.render('index', {

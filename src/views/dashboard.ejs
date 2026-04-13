@@ -166,56 +166,371 @@
             background: #333333;
             transform: translateY(-1px);
         }
-        
-        /* Footer */
-        .simple-footer {
-            background: #000000;
-            color: white;
-            padding: 2rem 0;
-            margin-top: 3rem;
-        }
-        
-        .footer-content {
+
+        /* ── Verification Cards ─────────────────────────── */
+        .verify-section {
             display: flex;
             flex-direction: column;
+            gap: 1rem;
+        }
+
+        .verify-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .verify-info {
+            display: flex;
             align-items: center;
-            gap: 1.5rem;
+            gap: 1rem;
+        }
+
+        .verify-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        .verify-icon.email  { background: #f0fdf4; color: #059669; }
+        .verify-icon.discord { background: #eef2ff; color: #5865F2; }
+
+        .verify-text h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #111827;
+            margin: 0 0 0.2rem;
+        }
+
+        .verify-text p {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin: 0;
+        }
+
+        .badge-verified {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: #f0fdf4;
+            color: #059669;
+            border: 1px solid #bbf7d0;
+            padding: 0.3rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-unverified {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: #fef9c3;
+            color: #854d0e;
+            border: 1px solid #fde68a;
+            padding: 0.3rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .btn-verify-email {
+            background: #000;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1.1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.2s;
+        }
+        .btn-verify-email:hover { background: #333; }
+
+        .btn-verify-discord {
+            background: #5865F2;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1.1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.2s;
+            text-decoration: none;
+        }
+        .btn-verify-discord:hover { background: #4752c4; }
+
+        /* OTP Input Panel */
+        .otp-panel {
+            display: none;
+            margin-top: 1rem;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+        }
+
+        .otp-panel.active { display: block; }
+
+        .otp-panel p {
+            margin: 0 0 0.75rem;
+            font-size: 0.875rem;
+            color: #374151;
+        }
+
+        .otp-input-row {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .otp-input {
+            font-family: 'Courier New', monospace;
+            font-size: 1.25rem;
+            letter-spacing: 4px;
             text-align: center;
+            width: 140px;
+            padding: 0.5rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .otp-input:focus { border-color: #000; }
+
+        .btn-otp-confirm {
+            background: #000;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.2s;
+        }
+        .btn-otp-confirm:hover { background: #333; }
+
+        .btn-otp-resend {
+            background: none;
+            border: none;
+            color: #6b7280;
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: underline;
+            padding: 0;
+        }
+        .btn-otp-resend:hover { color: #111; }
+
+        .divider {
+            border: none;
+            border-top: 2px solid #f3f4f6;
+            margin: 1rem 0;
         }
         
+        /* FOOTER SAMA DENGAN LOGIN/REGISTER */
+        .footer {
+            background: linear-gradient(135deg, #000 0%, #111 100%);
+            color: white;
+            padding: 4rem 0 2rem 0;
+            margin-top: auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
         .footer-logo {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            font-size: 1.5rem;
+            color: white;
+            font-size: 1.8rem;
             font-weight: 700;
+            text-decoration: none;
+            margin-bottom: 1rem;
+        }
+
+        .footer-description {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            font-size: 0.95rem;
+            max-width: 300px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
             text-decoration: none;
+            transition: all 0.3s ease;
         }
-        
-        .footer-logo i {
-            color: #ffffff;
+
+        .social-link:hover {
+            background: #000;
+            transform: translateY(-3px);
         }
-        
-        .footer-links {
-            display: flex;
+
+        .footer-links-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 2rem;
         }
-        
+
+        .footer-links-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .footer-column-title {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .footer-column-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: white;
+        }
+
         .footer-link {
             color: rgba(255, 255, 255, 0.7);
             text-decoration: none;
-            font-size: 0.875rem;
-            transition: color 0.2s ease;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0;
         }
-        
+
         .footer-link:hover {
             color: white;
+            transform: translateX(5px);
         }
-        
+
+        .footer-link i {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
         .footer-copyright {
             color: rgba(255, 255, 255, 0.5);
-            font-size: 0.875rem;
+            font-size: 0.9rem;
+        }
+
+        .footer-legal {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-legal-link {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-legal-link:hover {
+            color: white;
+        }
+
+        /* Responsive Footer */
+        @media (max-width: 768px) {
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .footer-links-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .footer-legal {
+                justify-content: center;
+            }
         }
         
         /* Navigation */
@@ -335,11 +650,6 @@
                 justify-content: space-between;
             }
             
-            .footer-links {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
             .verify-code-display {
                 display: block;
                 margin-bottom: 0.5rem;
@@ -425,10 +735,6 @@
                 <!-- Welcome Header -->
                 <div class="grid-card grid-col-12 animate-fade-in">
                     <div class="card-header">
-                        <h1 class="card-title">
-                            <i class="fas fa-tachometer-alt"></i>
-                            Dashboard Overview
-                        </h1>
                         <div style="color: #6b7280; font-size: 0.875rem;">
                             Last login: <span id="last-login">Just now</span>
                         </div>
@@ -436,31 +742,6 @@
                     <p style="color: #6b7280; line-height: 1.5;">
                         Welcome back, <strong><%= user.username %></strong>. Here's your account summary and important information.
                     </p>
-                </div>
-
-                <!-- Stats Cards -->
-                <div class="grid-card grid-col-4 stat-card animate-fade-in" style="animation-delay: 0.1s;">
-                    <div class="stat-icon">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="stat-value" id="server-time">--:--:--</div>
-                    <div class="stat-label">Server Time</div>
-                </div>
-
-                <div class="grid-card grid-col-4 stat-card animate-fade-in" style="animation-delay: 0.2s;">
-                    <div class="stat-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="stat-value">Verified</div>
-                    <div class="stat-label">Account Status</div>
-                </div>
-
-                <div class="grid-card grid-col-4 stat-card animate-fade-in" style="animation-delay: 0.3s;">
-                    <div class="stat-icon">
-                        <i class="fas fa-user-shield"></i>
-                    </div>
-                    <div class="stat-value">Active</div>
-                    <div class="stat-label">Online Status</div>
                 </div>
 
                 <!-- Account Information Table (Termasuk Verification Code) -->
@@ -517,27 +798,174 @@
                         <% } %>
                     </table>
                 </div>
+
+                <!-- ── Account Verification Card ──────────────────────────────── -->
+                <div class="grid-card grid-col-12 animate-fade-in" style="animation-delay: 0.5s;">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-shield-alt"></i>
+                            Account Verification
+                        </h2>
+                    </div>
+
+                    <div class="verify-section">
+
+                        <!-- Email Verification Row -->
+                        <div class="verify-row">
+                            <div class="verify-info">
+                                <div class="verify-icon email">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="verify-text">
+                                    <h3>Email Verification</h3>
+                                    <p><%= user.email %></p>
+                                </div>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+                                <% if (user.emailVerified) { %>
+                                    <span class="badge-verified"><i class="fas fa-check-circle"></i> Verified</span>
+                                <% } else { %>
+                                    <span class="badge-unverified"><i class="fas fa-exclamation-circle"></i> Not Verified</span>
+                                    <button class="btn-verify-email" onclick="sendEmailOTP(this)">
+                                        <i class="fas fa-paper-plane"></i> Send OTP
+                                    </button>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <!-- OTP Input Panel (hidden until OTP sent) -->
+                        <% if (!user.emailVerified) { %>
+                        <div class="otp-panel" id="otp-panel">
+                            <p>Enter the 6-digit code sent to <strong><%= user.email %></strong>:</p>
+                            <div class="otp-input-row">
+                                <input type="text" class="otp-input" id="otp-input"
+                                       maxlength="6" placeholder="000000"
+                                       oninput="this.value=this.value.replace(/\D/g,'')">
+                                <button class="btn-otp-confirm" onclick="confirmEmailOTP()">
+                                    <i class="fas fa-check"></i> Confirm
+                                </button>
+                                <button class="btn-otp-resend" onclick="sendEmailOTP(null)">Resend code</button>
+                            </div>
+                        </div>
+                        <% } %>
+
+                        <hr class="divider">
+
+                        <!-- Discord Verification Row -->
+                        <div class="verify-row">
+                            <div class="verify-info">
+                                <div class="verify-icon discord">
+                                    <i class="fab fa-discord"></i>
+                                </div>
+                                <div class="verify-text">
+                                    <h3>Discord Verification</h3>
+                                    <% if (user.discordVerified && user.discordUsername) { %>
+                                        <p>Connected as <strong><%= user.discordUsername %></strong></p>
+                                    <% } else { %>
+                                        <p>Link your Discord account for extra security</p>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:0.75rem;">
+                                <% if (user.discordVerified) { %>
+                                    <span class="badge-verified"><i class="fas fa-check-circle"></i> Connected</span>
+                                <% } else { %>
+                                    <span class="badge-unverified"><i class="fas fa-exclamation-circle"></i> Not Connected</span>
+                                    <a href="/verify/discord" class="btn-verify-discord">
+                                        <i class="fab fa-discord"></i> Connect Discord
+                                    </a>
+                                <% } %>
+                            </div>
+                        </div>
+
+                    </div><!-- /.verify-section -->
+                </div>
+                <!-- ── End Account Verification Card ──────────────────────────── -->
+
             </div>
         </div>
     </main>
 
-    <!-- Simple Footer -->
-    <footer class="simple-footer">
-        <div class="container">
-            <div class="footer-content">
-                <a href="/" class="footer-logo">
-                    CENTRA ROLEPLAY
-                </a>
-                
-                <div class="footer-links">
-                    <a href="/" class="footer-link">Home</a>
-                    <a href="/dashboard" class="footer-link">Dashboard</a>
-                    <a href="#" class="footer-link">Support</a>
-                    <a href="/logout" class="footer-link">Logout</a>
+    <!-- FOOTER SAMA DENGAN LOGIN/REGISTER -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <!-- Brand Column -->
+                <div class="footer-brand">
+                    <a href="/" class="footer-logo">
+                        CENTRA ROLEPLAY
+                    </a>
+                    <p class="footer-description">
+                        Professional SA:MP User Control Panel providing secure account management 
+                        and enhanced gaming experience for San Andreas Multiplayer community.
+                    </p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" aria-label="Discord">
+                            <i class="fab fa-discord"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
                 </div>
-                
+
+                <!-- Links Columns -->
+                <div class="footer-links-container">
+                    <div class="footer-links-column">
+                        <h4 class="footer-column-title">Navigation</h4>
+                        <a href="/" class="footer-link">
+                            <i class="fas fa-home"></i>
+                            Home
+                        </a>
+                        <a href="/login" class="footer-link">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Login
+                        </a>
+                        <a href="/register" class="footer-link">
+                            <i class="fas fa-user-plus"></i>
+                            Register
+                        </a>
+                        <a href="/about" class="footer-link">
+                            <i class="fas fa-info-circle"></i>
+                            About Us
+                        </a>
+                    </div>
+
+                    <div class="footer-links-column">
+                        <h4 class="footer-column-title">Resources</h4>
+                        <a href="/guides" class="footer-link">
+                            <i class="fas fa-book"></i>
+                            Guides
+                        </a>
+                        <a href="/faq" class="footer-link">
+                            <i class="fas fa-question-circle"></i>
+                            FAQ
+                        </a>
+                        <a href="/support" class="footer-link">
+                            <i class="fas fa-headset"></i>
+                            Support
+                        </a>
+                        <a href="/status" class="footer-link">
+                            <i class="fas fa-server"></i>
+                            Server Status
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Bar -->
+            <div class="footer-bottom">
                 <div class="footer-copyright">
-                    <p>&copy; <%= new Date().getFullYear() %> CENTRA ROLEPLAY. All rights reserved.</p>
+                    <p>
+                        <i class="fas fa-copyright"></i>
+                        2025 CENTRA ROLEPLAY. All rights reserved.
+                    </p>
+                </div>
+                <div class="footer-legal">
+                    <a href="/privacy" class="footer-legal-link">Privacy Policy</a>
+                    <a href="/terms" class="footer-legal-link">Terms of Service</a>
+                    <a href="/cookies" class="footer-legal-link">Cookie Policy</a>
+                    <a href="/legal" class="footer-legal-link">Legal Notice</a>
                 </div>
             </div>
         </div>
@@ -553,8 +981,8 @@
                 minute: '2-digit',
                 second: '2-digit'
             });
-            
-            document.getElementById('server-time').textContent = timeString;
+            const el = document.getElementById('server-time');
+            if (el) el.textContent = timeString;
         }
         
         setInterval(updateServerTime, 1000);
@@ -575,30 +1003,85 @@
             <% } %>
         }
 
+        // ── Email OTP ──────────────────────────────────────────────────────────
+        let otpSending = false;
+
+        async function sendEmailOTP(btn) {
+            if (otpSending) return;
+            otpSending = true;
+            if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending…'; }
+
+            try {
+                const res  = await fetch('/verify/email/send', { method: 'POST' });
+                const data = await res.json();
+
+                if (data.success) {
+                    document.getElementById('otp-panel').classList.add('active');
+                    showToast('OTP sent! Check your email inbox.');
+                } else {
+                    showToast(data.error || 'Failed to send OTP', 'error');
+                }
+            } catch (e) {
+                showToast('Network error. Try again.', 'error');
+            } finally {
+                otpSending = false;
+                if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP'; }
+            }
+        }
+
+        async function confirmEmailOTP() {
+            const otp = document.getElementById('otp-input').value.trim();
+            if (otp.length !== 6) { showToast('Please enter the 6-digit code', 'error'); return; }
+
+            try {
+                const res  = await fetch('/verify/email/confirm', {
+                    method:  'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body:    JSON.stringify({ otp })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    showToast('Email verified successfully!');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showToast(data.error || 'Invalid OTP', 'error');
+                }
+            } catch (e) {
+                showToast('Network error. Try again.', 'error');
+            }
+        }
+
+        // ── Discord callback toast ─────────────────────────────────────────────
+        (function () {
+            const params = new URLSearchParams(window.location.search);
+            const discord = params.get('discord');
+            if (discord === 'success') showToast('Discord account connected!');
+            if (discord === 'error')   showToast('Discord connection failed. Try again.', 'error');
+            if (discord === 'taken')   showToast('This Discord account is already linked to another user.', 'error');
+            if (discord) {
+                // Remove query param from URL without reload
+                const url = new URL(window.location.href);
+                url.searchParams.delete('discord');
+                history.replaceState({}, '', url.toString());
+            }
+        })();
+
         // Toast notification
         function showToast(message, type = 'success') {
-            // Remove existing toast
             const existingToast = document.querySelector('.toast');
-            if (existingToast) {
-                existingToast.remove();
-            }
+            if (existingToast) existingToast.remove();
             
-            // Create new toast
             const toast = document.createElement('div');
             toast.className = 'toast';
             
             let icon = 'fas fa-check-circle';
             if (type === 'error') icon = 'fas fa-exclamation-circle';
-            if (type === 'info') icon = 'fas fa-info-circle';
+            if (type === 'info')  icon = 'fas fa-info-circle';
             
-            toast.innerHTML = `
-                <i class="${icon}"></i>
-                <span>${message}</span>
-            `;
-            
+            toast.innerHTML = `<i class="${icon}"></i><span>${message}</span>`;
             document.body.appendChild(toast);
             
-            // Auto remove after 3 seconds
             setTimeout(() => {
                 toast.style.opacity = '0';
                 toast.style.transform = 'translateX(100%)';
