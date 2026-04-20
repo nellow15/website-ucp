@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard - CENTRA ROLEPLAY</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ── Navigation ─────────────────────────────────────────────── */
+        .dashboard-nav {
+            background: #fff; border-bottom: 1px solid #e5e7eb;
+            padding: 1rem 0; position: sticky; top: 0; z-index: 200;
+        }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; }
+        .nav-brand { display: flex; align-items: center; gap: 0.75rem; font-size: 1.25rem; font-weight: 700; color: #000; text-decoration: none; }
+        .nav-actions { display: flex; gap: 0.75rem; align-items: center; }
+
+        /* User dropdown */
+        .nav-user-wrap { position: relative; }
+        .nav-user {
+            display: flex; align-items: center; gap: 0.6rem;
+            padding: 0.45rem 1rem; background: #f9fafb;
+            border: 1px solid #e5e7eb; border-radius: 8px;
+            color: #111827; font-weight: 600; font-size: 0.9rem;
+            cursor: pointer; user-select: none; transition: all 0.2s;
+        }
+        .nav-user:hover, .nav-user.open { background: #f3f4f6; border-color: #d1d5db; }
+        .nav-user i.fa-user-circle { color: #6b7280; }
+        .nav-user i.fa-chevron-down { color: #9ca3af; font-size: 0.65rem; transition: transform 0.2s; }
+        .nav-user.open i.fa-chevron-down { transform: rotate(180deg); }
+        .nav-dropdown {
+            display: none; position: absolute; top: calc(100% + 0.5rem); right: 0;
+            background: #fff; border: 1px solid #e5e7eb; border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1); min-width: 180px; z-index: 300;
+            overflow: hidden; animation: dropIn 0.15s ease-out;
+        }
+        .nav-dropdown.open { display: block; }
+        @keyframes dropIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+        .nav-dropdown-header { padding: 0.75rem 1rem 0.5rem; font-size: 0.7rem; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #f3f4f6; }
+        .nav-dropdown-item { display: flex; align-items: center; gap: 0.65rem; padding: 0.65rem 1rem; color: #374151; font-size: 0.875rem; font-weight: 500; text-decoration: none; transition: background 0.15s; }
+        .nav-dropdown-item:hover { background: #f9fafb; color: #000; }
+        .nav-dropdown-item i { width: 16px; text-align: center; color: #6b7280; font-size: 0.85rem; }
+        .nav-dropdown-item:hover i { color: #000; }
+
+        .nav-btn { padding: 0.5rem 1rem; border-radius: 6px; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.2s; }
+        .nav-btn-home { background: #f9fafb; color: #111827; border: 2px solid #e5e7eb; }
+        .nav-btn-home:hover { background: #e5e7eb; }
+        .nav-btn-logout { background: #000; color: #fff; border: 2px solid #000; }
+        .nav-btn-logout:hover { background: #333; border-color: #333; }
+
+        /* ── Page Layout ─────────────────────────────────────────────── */
+        .lb-wrapper { max-width: 860px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+
+        /* ── Page Header ─────────────────────────────────────────────── */
+        .lb-page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .lb-page-header h1 {
+            font-size: 1.75rem; font-weight: 800; color: #111827; margin: 0 0 0.35rem;
+            display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+        }
+        .lb-page-header p { color: #6b7280; font-size: 0.9rem; margin: 0; }
+
+        /* ── Tabs ────────────────────────────────────────────────────── */
+        .lb-tabs {
+            display: flex;
+            gap: 0.5rem;
+            background: #f3f4f6;
+            border-radius: 10px;
+            padding: 0.35rem;
+            margin-bottom: 1.5rem;
+        }
+        .lb-tab {
+            flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            padding: 0.6rem 1rem; border-radius: 7px; border: none;
+            font-size: 0.875rem; font-weight: 600; cursor: pointer;
+            background: transparent; color: #6b7280;
+            transition: all 0.2s;
+        }
+        .lb-tab:hover { color: #111827; background: rgba(255,255,255,0.6); }
+        .lb-tab.active { background: #fff; color: #111827; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+        .lb-tab i { font-size: 0.9rem; }
+
+        /* ── Table Card ──────────────────────────────────────────────── */
+        .lb-card {
+            background: #fff; border: 1px solid #e5e7eb;
+            border-radius: 14px; overflow: hidden;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+        }
+
+        .lb-panel { display: none; }
+        .lb-panel.active { display: block; }
+
+        /* Top 3 podium */
+        .lb-podium {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1.75rem 1rem 0;
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .podium-item {
+            display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+            flex: 1; max-width: 180px;
+        }
+
+        .podium-skin {
+            position: relative;
+            width: 60px; height: 80px;
+            display: flex; align-items: flex-end; justify-content: center;
+        }
+        .podium-skin img { height: 100%; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.15)); }
+
+        .podium-rank {
+            width: 28px; height: 28px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.78rem; font-weight: 800;
+        }
+        .rank-1 { background: #fbbf24; color: #78350f; }
+        .rank-2 { background: #9ca3af; color: #fff; }
+        .rank-3 { background: #b45309; color: #fff; }
+
+        .podium-name { font-size: 0.82rem; font-weight: 700; color: #111827; text-align: center; max-width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .podium-val  { font-size: 0.78rem; font-weight: 600; }
+        .podium-val.money { color: #059669; }
+        .podium-val.gold  { color: #b45309; }
+
+        .podium-block {
+            width: 100%;
+            border-radius: 6px 6px 0 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+        }
+        .block-1 { height: 56px; background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+        .block-2 { height: 40px; background: linear-gradient(135deg, #d1d5db, #9ca3af); }
+        .block-3 { height: 28px; background: linear-gradient(135deg, #d97706, #b45309); }
+
+        /* Rows 4–10 */
+        .lb-table { width: 100%; border-collapse: collapse; }
+        .lb-table thead tr { background: #f9fafb; border-bottom: 1px solid #e5e7eb; }
+        .lb-table th { padding: 0.75rem 1rem; text-align: left; font-size: 0.72rem; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; }
+        .lb-table tbody tr { border-bottom: 1px solid #f3f4f6; transition: background 0.15s; }
+        .lb-table tbody tr:last-child { border-bottom: none; }
+        .lb-table tbody tr:hover { background: #fafafa; }
+        .lb-table td { padding: 0.85rem 1rem; font-size: 0.875rem; color: #374151; vertical-align: middle; }
+
+        .lb-rank-cell { font-family: 'Courier New', monospace; font-weight: 700; color: #9ca3af; font-size: 0.85rem; width: 3rem; }
+        .lb-char-cell { display: flex; align-items: center; gap: 0.75rem; }
+        .lb-char-skin { width: 32px; height: 40px; object-fit: contain; image-rendering: pixelated; }
+        .lb-char-name { font-weight: 700; color: #111827; }
+        .lb-char-user { font-size: 0.75rem; color: #9ca3af; }
+        .lb-val-money { font-weight: 700; color: #059669; font-family: 'Courier New', monospace; }
+        .lb-val-gold  { font-weight: 700; color: #b45309; font-family: 'Courier New', monospace; }
+
+        .lb-empty { text-align: center; padding: 3rem 1rem; color: #9ca3af; }
+        .lb-empty i { font-size: 2.5rem; margin-bottom: 0.5rem; display: block; }
+
+        /* ── Footer ─────────────────────────────────────────────────── */
+        .footer { background: linear-gradient(135deg, #000 0%, #111 100%); color: white; padding: 4rem 0 2rem 0; margin-top: auto; position: relative; overflow: hidden; }
+        .footer::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); }
+        .footer-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3rem; margin-bottom: 3rem; }
+        .footer-brand { display: flex; flex-direction: column; gap: 1rem; }
+        .footer-logo { display: flex; align-items: center; gap: 0.75rem; color: white; font-size: 1.8rem; font-weight: 700; text-decoration: none; margin-bottom: 1rem; }
+        .footer-description { color: rgba(255,255,255,0.7); line-height: 1.6; font-size: 0.95rem; max-width: 300px; }
+        .footer-social { display: flex; gap: 1rem; margin-top: 1.5rem; }
+        .social-link { width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: all 0.3s; }
+        .social-link:hover { background: #000; transform: translateY(-3px); }
+        .footer-links-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+        .footer-links-column { display: flex; flex-direction: column; gap: 1rem; }
+        .footer-column-title { color: white; font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; position: relative; padding-bottom: 0.5rem; }
+        .footer-column-title::after { content: ''; position: absolute; bottom: 0; left: 0; width: 40px; height: 2px; background: white; }
+        .footer-link { color: rgba(255,255,255,0.7); text-decoration: none; transition: all 0.3s; display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0; }
+        .footer-link:hover { color: white; transform: translateX(5px); }
+        .footer-link i { font-size: 0.8rem; opacity: 0.7; }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; }
+        .footer-copyright { color: rgba(255,255,255,0.5); font-size: 0.9rem; }
+        .footer-legal { display: flex; gap: 2rem; flex-wrap: wrap; }
+        .footer-legal-link { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.9rem; transition: color 0.3s; }
+        .footer-legal-link:hover { color: white; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out; }
+
+        @media (max-width: 640px) {
+            .nav-container { flex-direction: column; gap: 1rem; }
+            .nav-actions { width: 100%; justify-content: space-between; }
+            .lb-podium { gap: 0.4rem; padding: 1.25rem 0.5rem 0; }
+            .podium-name { font-size: 0.72rem; }
+            .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .footer-links-container { grid-template-columns: 1fr; gap: 1.5rem; }
+            .footer-bottom { flex-direction: column; text-align: center; gap: 1rem; }
+            .footer-legal { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="dashboard-nav">
+        <div class="container nav-container">
+            <a href="/" class="nav-brand">CENTRA ROLEPLAY</a>
+            <div class="nav-actions">
+                <div class="nav-user-wrap">
+                    <div class="nav-user" id="nav-user-btn" onclick="toggleDropdown()">
+                        <% if (user.discordAvatar) { %>
+                            <img src="<%= user.discordAvatar %>" alt=""
+                                 style="width:22px;height:22px;border-radius:50%;object-fit:cover;flex-shrink:0;">
+                        <% } else { %>
+                            <i class="fas fa-user-circle" style="color:#6b7280;font-size:0.95rem;"></i>
+                        <% } %>
+                        <span><%= user.username %></span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="nav-dropdown" id="nav-dropdown">
+                        <div class="nav-dropdown-header"><%= user.username %></div>
+                        <a href="/dashboard" class="nav-dropdown-item">
+                            <i class="fas fa-chart-line"></i> Dashboard
+                        </a>
+                        <a href="/settings" class="nav-dropdown-item">
+                            <i class="fas fa-gear"></i> Settings
+                        </a>
+                        <a href="/leaderboard" class="nav-dropdown-item">
+                            <i class="fas fa-trophy"></i> Leaderboard
+                        </a>
+                    </div>
+                </div>
+                <a href="/logout" class="nav-btn nav-btn-logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="page-wrapper">
+        <div class="lb-wrapper">
+
+            <!-- Page Header -->
+            <div class="lb-page-header animate-fade-in">
+                <h1><i class="fas fa-trophy" style="color:#fbbf24;"></i> Leaderboard</h1>
+                <p>Top players across CENTRA ROLEPLAY</p>
+            </div>
+
+            <!-- Tabs -->
+            <div class="lb-tabs animate-fade-in">
+                <button class="lb-tab active" id="tab-money" onclick="switchTab('money')">
+                    <i class="fas fa-dollar-sign" style="color:#059669;"></i> Top Money
+                </button>
+                <button class="lb-tab" id="tab-gold" onclick="switchTab('gold')">
+                    <i class="fas fa-coins" style="color:#b45309;"></i> Top Gold
+                </button>
+            </div>
+
+            <!-- ── Money Panel ───────────────────────────────────────── -->
+            <div class="lb-panel active animate-fade-in" id="panel-money">
+                <div class="lb-card">
+                    <% if (topMoney && topMoney.length > 0) { %>
+
+                        <!-- Podium top 3 -->
+                        <div class="lb-podium">
+                            <%
+                                // Order: 2nd, 1st, 3rd for visual podium
+                                const moneyPodium = [
+                                    topMoney[1] || null,
+                                    topMoney[0] || null,
+                                    topMoney[2] || null
+                                ];
+                                const moneyBlocks = ['block-2','block-1','block-3'];
+                                const moneyRanks  = [2, 1, 3];
+                                const moneyHeights = [40, 56, 28];
+                            %>
+                            <% moneyPodium.forEach(function(entry, pi) { %>
+                            <div class="podium-item">
+                                <% if (entry) { %>
+                                    <img src="https://assets.open.mp/assets/images/skins/<%= entry.Skin %>.png"
+                                         style="height:70px;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.15));"
+                                         onerror="this.src='https://assets.open.mp/assets/images/skins/0.png'">
+                                    <span class="podium-rank rank-<%= moneyRanks[pi] %>">#<%= moneyRanks[pi] %></span>
+                                    <span class="podium-name"><%= entry.Character %></span>
+                                    <span class="podium-val money">$<%= Number(entry.Money).toLocaleString('id-ID') %></span>
+                                <% } else { %>
+                                    <span style="height:70px;display:block;"></span>
+                                    <span class="podium-rank rank-<%= moneyRanks[pi] %>">#<%= moneyRanks[pi] %></span>
+                                    <span class="podium-name" style="color:#d1d5db;">—</span>
+                                <% } %>
+                                <div class="podium-block <%= moneyBlocks[pi] %>"></div>
+                            </div>
+                            <% }); %>
+                        </div>
+
+                        <!-- Rows 4–10 -->
+                        <% if (topMoney.length > 3) { %>
+                        <table class="lb-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Character</th>
+                                    <th>Money</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% topMoney.slice(3).forEach(function(entry, i) { %>
+                                <tr>
+                                    <td class="lb-rank-cell">#<%= i + 4 %></td>
+                                    <td>
+                                        <div class="lb-char-cell">
+                                            <img class="lb-char-skin"
+                                                 src="https://assets.open.mp/assets/images/skins/<%= entry.Skin %>.png"
+                                                 onerror="this.src='https://assets.open.mp/assets/images/skins/0.png'">
+                                            <div>
+                                                <div class="lb-char-name"><%= entry.Character %></div>
+                                                <div class="lb-char-user"><%= entry.Username %></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="lb-val-money">$<%= Number(entry.Money).toLocaleString('id-ID') %></td>
+                                </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                        <% } %>
+
+                    <% } else { %>
+                        <div class="lb-empty">
+                            <i class="fas fa-dollar-sign"></i>
+                            <p>No data available.</p>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- ── Gold Panel ────────────────────────────────────────── -->
+            <div class="lb-panel animate-fade-in" id="panel-gold">
+                <div class="lb-card">
+                    <% if (topGold && topGold.length > 0) { %>
+
+                        <!-- Podium top 3 -->
+                        <div class="lb-podium">
+                            <%
+                                const goldPodium = [
+                                    topGold[1] || null,
+                                    topGold[0] || null,
+                                    topGold[2] || null
+                                ];
+                                const goldBlocks = ['block-2','block-1','block-3'];
+                                const goldRanks  = [2, 1, 3];
+                            %>
+                            <% goldPodium.forEach(function(entry, pi) { %>
+                            <div class="podium-item">
+                                <% if (entry) { %>
+                                    <img src="https://assets.open.mp/assets/images/skins/<%= entry.Skin %>.png"
+                                         style="height:70px;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.15));"
+                                         onerror="this.src='https://assets.open.mp/assets/images/skins/0.png'">
+                                    <span class="podium-rank rank-<%= goldRanks[pi] %>">#<%= goldRanks[pi] %></span>
+                                    <span class="podium-name"><%= entry.Character %></span>
+                                    <span class="podium-val gold"><%= Number(entry.Gold).toLocaleString('id-ID') %> G</span>
+                                <% } else { %>
+                                    <span style="height:70px;display:block;"></span>
+                                    <span class="podium-rank rank-<%= goldRanks[pi] %>">#<%= goldRanks[pi] %></span>
+                                    <span class="podium-name" style="color:#d1d5db;">—</span>
+                                <% } %>
+                                <div class="podium-block <%= goldBlocks[pi] %>"></div>
+                            </div>
+                            <% }); %>
+                        </div>
+
+                        <!-- Rows 4–10 -->
+                        <% if (topGold.length > 3) { %>
+                        <table class="lb-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Character</th>
+                                    <th>Gold</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% topGold.slice(3).forEach(function(entry, i) { %>
+                                <tr>
+                                    <td class="lb-rank-cell">#<%= i + 4 %></td>
+                                    <td>
+                                        <div class="lb-char-cell">
+                                            <img class="lb-char-skin"
+                                                 src="https://assets.open.mp/assets/images/skins/<%= entry.Skin %>.png"
+                                                 onerror="this.src='https://assets.open.mp/assets/images/skins/0.png'">
+                                            <div>
+                                                <div class="lb-char-name"><%= entry.Character %></div>
+                                                <div class="lb-char-user"><%= entry.Username %></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="lb-val-gold"><%= Number(entry.Gold).toLocaleString('id-ID') %> G</td>
+                                </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                        <% } %>
+
+                    <% } else { %>
+                        <div class="lb-empty">
+                            <i class="fas fa-coins"></i>
+                            <p>No data available.</p>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="/" class="footer-logo">CENTRA ROLEPLAY</a>
+                    <p class="footer-description">Professional SA:MP User Control Panel providing secure account management and enhanced gaming experience for San Andreas Multiplayer community.</p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" aria-label="Discord"><i class="fab fa-discord"></i></a>
+                        <a href="#" class="social-link" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links-container">
+                    <div class="footer-links-column">
+                        <h4 class="footer-column-title">Navigation</h4>
+                        <a href="/"         class="footer-link"><i class="fas fa-home"></i> Home</a>
+                        <a href="/login"    class="footer-link"><i class="fas fa-sign-in-alt"></i> Login</a>
+                        <a href="/register" class="footer-link"><i class="fas fa-user-plus"></i> Register</a>
+                        <a href="/about"    class="footer-link"><i class="fas fa-info-circle"></i> About Us</a>
+                    </div>
+                    <div class="footer-links-column">
+                        <h4 class="footer-column-title">Resources</h4>
+                        <a href="/guides"  class="footer-link"><i class="fas fa-book"></i> Guides</a>
+                        <a href="/faq"     class="footer-link"><i class="fas fa-question-circle"></i> FAQ</a>
+                        <a href="/support" class="footer-link"><i class="fas fa-headset"></i> Support</a>
+                        <a href="/status"  class="footer-link"><i class="fas fa-server"></i> Server Status</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-copyright"><p><i class="fas fa-copyright"></i> 2025 CENTRA ROLEPLAY. All rights reserved.</p></div>
+                <div class="footer-legal">
+                    <a href="/privacy" class="footer-legal-link">Privacy Policy</a>
+                    <a href="/terms"   class="footer-legal-link">Terms of Service</a>
+                    <a href="/cookies" class="footer-legal-link">Cookie Policy</a>
+                    <a href="/legal"   class="footer-legal-link">Legal Notice</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ── Tab switcher ────────────────────────────────────────────────
+        function switchTab(tab) {
+            ['money','gold'].forEach(t => {
+                document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+                document.getElementById('panel-' + t).classList.toggle('active', t === tab);
+            });
+        }
+
+        // ── Dropdown ────────────────────────────────────────────────────
+        function toggleDropdown() {
+            const btn = document.getElementById('nav-user-btn');
+            const dd  = document.getElementById('nav-dropdown');
+            btn.classList.toggle('open');
+            dd.classList.toggle('open');
+        }
+        document.addEventListener('click', function (e) {
+            const wrap = document.querySelector('.nav-user-wrap');
+            if (wrap && !wrap.contains(e.target)) {
+                document.getElementById('nav-user-btn').classList.remove('open');
+                document.getElementById('nav-dropdown').classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -47,7 +47,7 @@ app.set('views', path_1.default.join(__dirname, 'views'));
 // Routes
 app.use('/', auth_1.default);
 app.use('/api', api_1.default);
-app.use('/verify', verifyRoutes_1.default);
+app.use('/', verifyRoutes_1.default);
 // Home route
 app.get('/', (req, res) => {
     res.render('index', {

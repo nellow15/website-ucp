@@ -91,6 +91,17 @@ router.post('/login', [
             [username]
         );
 
+        const ip =
+            (req.headers['cf-connecting-ip'] as string) ||
+            (req.headers['x-forwarded-for'] as string)?.split(',')[0] ||
+            req.socket.remoteAddress;
+    
+        await pool.execute(
+            `INSERT INTO login_history (AccountID, IPAddress, LoginTime)
+            VALUES (?, ?, NOW())`,
+            [user.ID, ip]
+        );
+
         // Set session
         (req.session as any).user = {
             id: user.ID,

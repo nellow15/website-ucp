@@ -73,6 +73,11 @@ router.post('/login', [
         }
         // Update last login
         await database_1.pool.execute('UPDATE accounts SET LastLogin = CURRENT_TIMESTAMP WHERE Username = ?', [username]);
+        const ip = req.headers['cf-connecting-ip'] ||
+            req.headers['x-forwarded-for']?.split(',')[0] ||
+            req.socket.remoteAddress;
+        await database_1.pool.execute(`INSERT INTO login_history (AccountID, IPAddress, LoginTime)
+            VALUES (?, ?, NOW())`, [user.ID, ip]);
         // Set session
         req.session.user = {
             id: user.ID,

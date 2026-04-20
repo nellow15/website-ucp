@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - CENTRA ROLEPLAY</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ── Navigation ─────────────────────────────────────────────── */
+        .dashboard-nav {
+            background: #fff; border-bottom: 1px solid #e5e7eb;
+            padding: 1rem 0; position: sticky; top: 0; z-index: 200;
+        }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; }
+        .nav-brand { display: flex; align-items: center; gap: 0.75rem; font-size: 1.25rem; font-weight: 700; color: #000; text-decoration: none; }
+        .nav-actions { display: flex; gap: 0.75rem; align-items: center; }
+
+        /* User dropdown */
+        .nav-user-wrap { position: relative; }
+        .nav-user {
+            display: flex; align-items: center; gap: 0.6rem;
+            padding: 0.45rem 1rem; background: #f9fafb;
+            border: 1px solid #e5e7eb; border-radius: 8px;
+            color: #111827; font-weight: 600; font-size: 0.9rem;
+            cursor: pointer; user-select: none; transition: all 0.2s;
+        }
+        .nav-user:hover, .nav-user.open { background: #f3f4f6; border-color: #d1d5db; }
+        .nav-user i.fa-user-circle { color: #6b7280; }
+        .nav-user i.fa-chevron-down { color: #9ca3af; font-size: 0.65rem; transition: transform 0.2s; }
+        .nav-user.open i.fa-chevron-down { transform: rotate(180deg); }
+        .nav-dropdown {
+            display: none; position: absolute; top: calc(100% + 0.5rem); right: 0;
+            background: #fff; border: 1px solid #e5e7eb; border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1); min-width: 180px; z-index: 300;
+            overflow: hidden; animation: dropIn 0.15s ease-out;
+        }
+        .nav-dropdown.open { display: block; }
+        @keyframes dropIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+        .nav-dropdown-header { padding: 0.75rem 1rem 0.5rem; font-size: 0.7rem; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #f3f4f6; }
+        .nav-dropdown-item { display: flex; align-items: center; gap: 0.65rem; padding: 0.65rem 1rem; color: #374151; font-size: 0.875rem; font-weight: 500; text-decoration: none; transition: background 0.15s; }
+        .nav-dropdown-item:hover { background: #f9fafb; color: #000; }
+        .nav-dropdown-item i { width: 16px; text-align: center; color: #6b7280; font-size: 0.85rem; }
+        .nav-dropdown-item:hover i { color: #000; }
+
+        .nav-btn { padding: 0.5rem 1rem; border-radius: 6px; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.2s; }
+        .nav-btn-home { background: #f9fafb; color: #111827; border: 2px solid #e5e7eb; }
+        .nav-btn-home:hover { background: #e5e7eb; }
+        .nav-btn-logout { background: #000; color: #fff; border: 2px solid #000; }
+        .nav-btn-logout:hover { background: #333; border-color: #333; }
+
+        /* ── Page Layout ─────────────────────────────────────────────── */
+        .faq-wrapper { max-width: 900px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+
+        /* ── Page Header ─────────────────────────────────────────────── */
+        .faq-page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .faq-page-header h1 {
+            font-size: 1.75rem; font-weight: 800; color: #111827; margin: 0 0 0.35rem;
+            display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+        }
+        .faq-page-header p { color: #6b7280; font-size: 0.9rem; margin: 0; }
+
+        /* ── Search Bar ───────────────────────────────────────────────── */
+        .faq-search {
+            margin-bottom: 1.5rem;
+        }
+        .search-container {
+            position: relative;
+        }
+        .search-container i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            background: #fff;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #000;
+            box-shadow: 0 0 0 3px rgba(0,0,0,0.1);
+        }
+
+        /* ── Category Tabs ────────────────────────────────────────────── */
+        .faq-categories {
+            display: flex;
+            gap: 0.5rem;
+            background: #f3f4f6;
+            border-radius: 10px;
+            padding: 0.35rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .category-tab {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1rem;
+            border-radius: 7px;
+            border: none;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: transparent;
+            color: #6b7280;
+            transition: all 0.2s;
+        }
+        .category-tab:hover { color: #111827; background: rgba(255,255,255,0.6); }
+        .category-tab.active { background: #fff; color: #111827; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+        .category-tab i { font-size: 0.9rem; }
+
+        /* ── FAQ Card ─────────────────────────────────────────────────── */
+        .faq-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+        .faq-card:hover {
+            border-color: #d1d5db;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .faq-question {
+            padding: 1.25rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            transition: background 0.2s;
+        }
+        .faq-question:hover {
+            background: #fafafa;
+        }
+        .faq-question h3 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #111827;
+            flex: 1;
+            padding-right: 1rem;
+        }
+        .faq-question i {
+            font-size: 0.9rem;
+            color: #9ca3af;
+            transition: transform 0.3s ease;
+        }
+        .faq-question.active i {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            background: #f9fafb;
+            border-top: 1px solid transparent;
+        }
+        .faq-answer.open {
+            border-top-color: #e5e7eb;
+        }
+        .faq-answer-content {
+            padding: 1.25rem 1.5rem;
+            color: #4b5563;
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+        .faq-answer-content ul, .faq-answer-content ol {
+            margin-top: 0.75rem;
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+        }
+        .faq-answer-content li {
+            margin: 0.5rem 0;
+        }
+        .faq-answer-content strong {
+            color: #111827;
+        }
+        .faq-answer-content .alert-info {
+            background: #e0f2fe;
+            border-left: 3px solid #0284c7;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: #0c4a6e;
+        }
+        .faq-answer-content .alert-info i {
+            margin-right: 0.5rem;
+        }
+
+        /* Empty state */
+        .faq-empty {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #9ca3af;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+        }
+        .faq-empty i {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        /* ── Footer ─────────────────────────────────────────────────── */
+        .footer { background: linear-gradient(135deg, #000 0%, #111 100%); color: white; padding: 4rem 0 2rem 0; margin-top: auto; position: relative; overflow: hidden; }
+        .footer::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); }
+        .footer-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3rem; margin-bottom: 3rem; }
+        .footer-brand { display: flex; flex-direction: column; gap: 1rem; }
+        .footer-logo { display: flex; align-items: center; gap: 0.75rem; color: white; font-size: 1.8rem; font-weight: 700; text-decoration: none; margin-bottom: 1rem; }
+        .footer-description { color: rgba(255,255,255,0.7); line-height: 1.6; font-size: 0.95rem; max-width: 300px; }
+        .footer-social { display: flex; gap: 1rem; margin-top: 1.5rem; }
+        .social-link { width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: all 0.3s; }
+        .social-link:hover { background: #000; transform: translateY(-3px); }
+        .footer-links-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+        .footer-links-column { display: flex; flex-direction: column; gap: 1rem; }
+        .footer-column-title { color: white; font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; position: relative; padding-bottom: 0.5rem; }
+        .footer-column-title::after { content: ''; position: absolute; bottom: 0; left: 0; width: 40px; height: 2px; background: white; }
+        .footer-link { color: rgba(255,255,255,0.7); text-decoration: none; transition: all 0.3s; display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0; }
+        .footer-link:hover { color: white; transform: translateX(5px); }
+        .footer-link i { font-size: 0.8rem; opacity: 0.7; }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; }
+        .footer-copyright { color: rgba(255,255,255,0.5); font-size: 0.9rem; }
+        .footer-legal { display: flex; gap: 2rem; flex-wrap: wrap; }
+        .footer-legal-link { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.9rem; transition: color 0.3s; }
+        .footer-legal-link:hover { color: white; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out; }
+
+        @media (max-width: 640px) {
+            .nav-container { flex-direction: column; gap: 1rem; }
+            .nav-actions { width: 100%; justify-content: space-between; }
+            .faq-categories { flex-direction: column; }
+            .category-tab { justify-content: center; }
+            .faq-question h3 { font-size: 0.9rem; }
+            .faq-answer-content { font-size: 0.85rem; }
+            .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .footer-links-container { grid-template-columns: 1fr; gap: 1.5rem; }
+            .footer-bottom { flex-direction: column; text-align: center; gap: 1rem; }
+            .footer-legal { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="dashboard-nav">
+        <div class="container nav-container">
+            <a href="/" class="nav-brand">CENTRA ROLEPLAY</a>
+            <div class="nav-actions">
+                <div class="nav-user-wrap">
+                    <div class="nav-user" id="nav-user-btn" onclick="toggleDropdown()">
+                        <% if (user && user.discordAvatar) { %>
+                            <img src="<%= user.discordAvatar %>" alt=""
+                                 style="width:22px;height:22px;border-radius:50%;object-fit:cover;flex-shrink:0;">
+                        <% } else { %>
+                            <i class="fas fa-user-circle" style="color:#6b7280;font-size:0.95rem;"></i>
+                        <% } %>
+                        <span><%= user ? user.username : 'Guest' %></span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="nav-dropdown" id="nav-dropdown">
+                        <div class="nav-dropdown-header"><%= user ? user.username : 'Guest' %></div>
+                        <a href="/dashboard" class="nav-dropdown-item">
+                            <i class="fas fa-chart-line"></i> Dashboard
+                        </a>
+                        <a href="/settings" class="nav-dropdown-item">
+                            <i class="fas fa-gear"></i> Settings
+                        </a>
+                        <a href="/leaderboard" class="nav-dropdown-item">
+                            <i class="fas fa-trophy"></i> Leaderboard
+                        </a>
+                        <a href="/faq" class="nav-dropdown-item">
+                            <i class="fas fa-question-circle"></i> FAQ
+                        </a>
+                    </div>
+                </div>
+                <a href="/logout" class="nav-btn nav-btn-logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="page-wrapper">
+        <div class="faq-wrapper">
+
+            <!-- Page Header -->
+            <div class="faq-page-header animate-fade-in">
+                <h1><i class="fas fa-question-circle" style="color:#fbbf24;"></i> Frequently Asked Questions</h1>
+                <p>Find answers to common questions about CENTRA ROLEPLAY server</p>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="faq-search animate-fade-in">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search questions or answers..." onkeyup="searchFAQ()">
+                </div>
+            </div>
+
+            <!-- Category Tabs -->
+            <div class="faq-categories animate-fade-in">
+                <button class="category-tab active" data-category="all" onclick="filterCategory('all')">
+                    <i class="fas fa-list"></i> All
+                </button>
+                <button class="category-tab" data-category="general" onclick="filterCategory('general')">
+                    <i class="fas fa-globe"></i> General
+                </button>
+                <button class="category-tab" data-category="gameplay" onclick="filterCategory('gameplay')">
+                    <i class="fas fa-gamepad"></i> Gameplay
+                </button>
+                <button class="category-tab" data-category="technical" onclick="filterCategory('technical')">
+                    <i class="fas fa-microchip"></i> Technical
+                </button>
+                <button class="category-tab" data-category="community" onclick="filterCategory('community')">
+                    <i class="fas fa-users"></i> Community
+                </button>
+                <button class="category-tab" data-category="rules" onclick="filterCategory('rules')">
+                    <i class="fas fa-gavel"></i> Rules
+                </button>
+            </div>
+
+            <!-- FAQ List Container -->
+            <div id="faqList">
+                <% if (faqs && faqs.length > 0) { %>
+                    <% faqs.forEach(function(faq, index) { %>
+                        <div class="faq-card animate-fade-in" data-category="<%= faq.category %>" data-question="<%= faq.question.toLowerCase() %>" data-answer="<%= faq.answer.toLowerCase() %>">
+                            <div class="faq-question" onclick="toggleAnswer(this)">
+                                <h3><%= faq.question %></h3>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    <%= faq.answer %>
+                                    <% if (faq.additionalInfo) { %>
+                                        <div class="alert-info">
+                                            <i class="fas fa-info-circle"></i> <%= faq.additionalInfo %>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <!-- Default FAQs if no data from server -->
+                    <div class="faq-card animate-fade-in" data-category="general" data-question="what is centra roleplay" data-answer="centra roleplay is a professional sa-mp server">
+                        <div class="faq-question" onclick="toggleAnswer(this)">
+                            <h3>What is CENTRA ROLEPLAY?</h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                CENTRA ROLEPLAY is a professional San Andreas Multiplayer (SA-MP) roleplay server focused on providing an immersive and realistic roleplay experience. We offer a unique environment where players can create their own stories, build careers, and interact with a vibrant community.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-card animate-fade-in" data-category="general" data-question="how to join server" data-answer="download samp connect to ip">
+                        <div class="faq-question" onclick="toggleAnswer(this)">
+                            <h3>How do I join the server?</h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                To join CENTRA ROLEPLAY, you need to:
+                                <ul>
+                                    <li>Have GTA San Andreas installed (v1.0 US recommended)</li>
+                                    <li>Download and install SA-MP (San Andreas Multiplayer) client v0.3.7</li>
+                                    <li>Register an account on our website</li>
+                                    <li>Open SA-MP, add our server IP: <strong>play.centra-rp.com:7777</strong></li>
+                                    <li>Connect and login with your credentials</li>
+                                </ul>
+                                <div class="alert-info">
+                                    <i class="fas fa-download"></i> Download links available in our <a href="/downloads" style="color:#0284c7;">Downloads</a> section.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-card animate-fade-in" data-category="gameplay" data-question="what jobs available" data-answer="jobs careers work legal illegal">
+                        <div class="faq-question" onclick="toggleAnswer(this)">
+                            <h3>What jobs are available in CENTRA RP?</h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                We offer a wide range of legal and illegal jobs:
+                                <ul>
+                                    <li><strong>Legal Jobs:</strong> Police Officer, EMS/Doctor, Mechanic, Lawyer, Truck Driver, Fisherman, Miner, News Reporter</li>
+                                    <li><strong>Illegal Jobs:</strong> Drug Dealer, Gun Smuggler, Car Thief, Hitman, Gang Member</li>
+                                    <li><strong>Businesses:</strong> Own and manage your own business (restaurants, clubs, gas stations, etc.)</li>
+                                </ul>
+                                Type <strong>/jobs</strong> in-game to see all available positions!
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-card animate-fade-in" data-category="gameplay" data-question="what is fearrp deathmatch dm" data-answer="fear roleplay rules">
+                        <div class="faq-question" onclick="toggleAnswer(this)">
+                            <h3>What is FearRP and Deathmatch (DM)?</h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <strong>FearRP (Fear Roleplay)</strong> is a rule that requires players to show realistic fear when their life is threatened (e.g., when a weapon is pointed at them). You must comply with demands or face consequences.
+                                <br><br>
+                                <strong>Deathmatch (DM)</strong> is attacking or killing another player without valid roleplay reasoning. This is strictly prohibited on CENTRA RP and can result in bans.
+                                <div class="alert-info">
+                                    <i class="fas fa-gavel"></i> Read our full <a href="/rules" style="color:#0284c7;">Rules</a> page for detailed information.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-card animate-fade-in" data-category="technical" data-question="system requirements" data-answer="specs minimum">
+                        <div class="faq-question" onclick="toggleAnswer(this)">
+                            <h3>What are the system requirements?</h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <strong>Minimum Requirements:</strong>
+                                <ul>
+                                    <li>OS: Windows 7/8/10/11</li>
+                                    <li>Processor: Intel Pentium 4 or AMD equivalent (1.8 GHz)</li>
+                                    <li>RAM: 1GB (2GB recommended)</li>
+                                    <li>Storage: 5GB free space</li>
+                                    <li>Internet: Stable connection (min 2 Mbps)</li>
+                                    <li>Graphics: DirectX 9 compatible</li>
+                                </ul>
+                                <strong>Recommended:</strong> Windows 10/11, 4GB RAM, dedicated GPU for better performance.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-card animate-fade-in" data-category="technical" data-question="can't connect crash" data-answer="troubleshooting">
+                        <div class="faq-question" onclick="toggleAnswer(this)">
+                            <h3>I can't connect / game crashes. Help!</h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                Try these solutions:
+                                <ul>
+                                    <li>Run SA-MP as Administrator</li>
+                                    <li>Disable antivirus temporarily (add exception for GTA/SA-MP folder)</li>
+                                    <li>Install latest DirectX and Visual C++ Redistributables</li>
+                                    <li>Ensure GTA San Andreas is version 1.0 (US/EU)</li>
+                                    <li>Check firewall settings - allow SA-MP through firewall</li>
+                                    <li>Clear your SA-MP cache (Documents/GTA San Andreas User Files/SAMP/cache)</li>
+                                </ul>
+                                If problems persist, contact support on our Discord.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-card animate-fade-in" data-category="community" data-question="discord events" data-answer="community discord link">
+                        <div class="faq-question" onclick="toggleAnswer(this)">
+                            <h3>Is there a Discord server? Are there events?</h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                Yes! Join our Discord community at <strong>discord.gg/centrarp</strong> for:
+                                <ul>
+                                    <li>Real-time announcements and updates</li>
+                                    <li>Support tickets</li>
+                                    <li>Community discussions</li>
+                                    <li>Event notifications</li>
+                                </ul>
+                                <strong>Weekly Events:</strong>
+                                <ul>
+                                    <li>Monday: Car Meet & Showcase</li>
+                                    <li>Wednesday: Roleplay Scenario Night</li>
+                                    <li>Friday: Fight Club / Boxing Event</li>
+                                    <li>Saturday: Gang Wars / Turf Wars</li>
+                                    <li>Sunday: Prize Giveaways & Contests</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-card animate-fade-in" data-category="rules" data-question="rule break ban punishment" data-answer="rules violations penalties">
+                        <div class="faq-question" onclick="toggleAnswer(this)">
+                            <h3>What happens if I break the rules?</h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                Our moderation team enforces rules fairly with a progressive penalty system:
+                                <ul>
+                                    <li><strong>First offense:</strong> Warning</li>
+                                    <li><strong>Second offense:</strong> 24-hour ban + warning</li>
+                                    <li><strong>Third offense:</strong> 7-day ban</li>
+                                    <li><strong>Severe violations (DM, cheating, harassment):</strong> Permanent ban</li>
+                                </ul>
+                                <div class="alert-info">
+                                    <i class="fas fa-balance-scale"></i> All bans can be appealed via our ticket system on Discord.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-card animate-fade-in" data-category="gameplay" data-question="how to make money" data-answer="earn cash money guide">
+                        <div class="faq-question" onclick="toggleAnswer(this)">
+                            <h3>How can I make money quickly?</h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                Best ways to earn money on CENTRA RP:
+                                <ul>
+                                    <li><strong>Start with legal jobs</strong> - Trucking, fishing, and mining are great for beginners</li>
+                                    <li><strong>Invest in skills</strong> - Higher skill levels = better pay</li>
+                                    <li><strong>Join a faction</strong> - Government jobs (PD, EMS) have stable salaries</li>
+                                    <li><strong>Own a business</strong> - Save up to buy property and earn passive income</li>
+                                    <li><strong>Participate in events</strong> - Prize money up to $500,000!</li>
+                                </ul>
+                                Type <strong>/help jobs</strong> in-game for detailed guides.
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+
+            <!-- Empty state (shown when search returns no results) -->
+            <div id="emptyState" class="faq-empty" style="display: none;">
+                <i class="fas fa-search"></i>
+                <p>No questions found matching your search.</p>
+                <p style="font-size: 0.85rem; margin-top: 0.5rem;">Try different keywords or browse all categories.</p>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="/" class="footer-logo">CENTRA ROLEPLAY</a>
+                    <p class="footer-description">Professional SA:MP User Control Panel providing secure account management and enhanced gaming experience for San Andreas Multiplayer community.</p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" aria-label="Discord"><i class="fab fa-discord"></i></a>
+                        <a href="#" class="social-link" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links-container">
+                    <div class="footer-links-column">
+                        <h4 class="footer-column-title">Navigation</h4>
+                        <a href="/" class="footer-link"><i class="fas fa-home"></i> Home</a>
+                        <a href="/dashboard" class="footer-link"><i class="fas fa-chart-line"></i> Dashboard</a>
+                        <a href="/leaderboard" class="footer-link"><i class="fas fa-trophy"></i> Leaderboard</a>
+                        <a href="/faq" class="footer-link"><i class="fas fa-question-circle"></i> FAQ</a>
+                    </div>
+                    <div class="footer-links-column">
+                        <h4 class="footer-column-title">Resources</h4>
+                        <a href="/rules" class="footer-link"><i class="fas fa-gavel"></i> Rules</a>
+                        <a href="/guides" class="footer-link"><i class="fas fa-book"></i> Guides</a>
+                        <a href="/support" class="footer-link"><i class="fas fa-headset"></i> Support</a>
+                        <a href="/status" class="footer-link"><i class="fas fa-server"></i> Server Status</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-copyright"><p><i class="fas fa-copyright"></i> 2025 CENTRA ROLEPLAY. All rights reserved.</p></div>
+                <div class="footer-legal">
+                    <a href="/privacy" class="footer-legal-link">Privacy Policy</a>
+                    <a href="/terms" class="footer-legal-link">Terms of Service</a>
+                    <a href="/cookies" class="footer-legal-link">Cookie Policy</a>
+                    <a href="/legal" class="footer-legal-link">Legal Notice</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ── Accordion / Toggle Answer ───────────────────────────────────
+        function toggleAnswer(element) {
+            const answerDiv = element.nextElementSibling;
+            const isActive = element.classList.contains('active');
+            
+            // Close all other answers
+            document.querySelectorAll('.faq-question').forEach(q => {
+                if (q !== element && q.classList.contains('active')) {
+                    q.classList.remove('active');
+                    const otherAnswer = q.nextElementSibling;
+                    otherAnswer.style.maxHeight = null;
+                    otherAnswer.classList.remove('open');
+                }
+            });
+            
+            // Toggle current answer
+            if (!isActive) {
+                element.classList.add('active');
+                answerDiv.style.maxHeight = answerDiv.scrollHeight + 'px';
+                answerDiv.classList.add('open');
+            } else {
+                element.classList.remove('active');
+                answerDiv.style.maxHeight = null;
+                answerDiv.classList.remove('open');
+            }
+        }
+
+        // ── Category Filter ────────────────────────────────────────────
+        let currentCategory = 'all';
+        
+        function filterCategory(category) {
+            currentCategory = category;
+            
+            // Update active button styling
+            document.querySelectorAll('.category-tab').forEach(btn => {
+                const btnCategory = btn.getAttribute('data-category');
+                if (btnCategory === category) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            // Filter cards
+            const cards = document.querySelectorAll('.faq-card');
+            let visibleCount = 0;
+            
+            cards.forEach(card => {
+                const cardCategory = card.getAttribute('data-category');
+                if (category === 'all' || cardCategory === category) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // Hide empty state if there are visible cards
+            const emptyState = document.getElementById('emptyState');
+            if (emptyState) {
+                emptyState.style.display = 'none';
+            }
+        }
+
+        // ── Search Functionality ───────────────────────────────────────
+        function searchFAQ() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.faq-card');
+            const emptyState = document.getElementById('emptyState');
+            let visibleCount = 0;
+            
+            cards.forEach(card => {
+                const question = card.getAttribute('data-question') || '';
+                const answer = card.getAttribute('data-answer') || '';
+                const category = card.getAttribute('data-category');
+                
+                // Check if matches category filter AND search term
+                const matchesCategory = (currentCategory === 'all' || category === currentCategory);
+                const matchesSearch = searchTerm === '' || question.includes(searchTerm) || answer.includes(searchTerm);
+                
+                if (matchesCategory && matchesSearch) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // Show/hide empty state
+            if (emptyState) {
+                if (visibleCount === 0 && searchTerm !== '') {
+                    emptyState.style.display = 'block';
+                } else {
+                    emptyState.style.display = 'none';
+                }
+            }
+        }
+
+        // ── Dropdown ────────────────────────────────────────────────────
+        function toggleDropdown() {
+            const btn = document.getElementById('nav-user-btn');
+            const dd = document.getElementById('nav-dropdown');
+            if (btn && dd) {
+                btn.classList.toggle('open');
+                dd.classList.toggle('open');
+            }
+        }
+        
+        document.addEventListener('click', function(e) {
+            const wrap = document.querySelector('.nav-user-wrap');
+            if (wrap && !wrap.contains(e.target)) {
+                const btn = document.getElementById('nav-user-btn');
+                const dd = document.getElementById('nav-dropdown');
+                if (btn && dd) {
+                    btn.classList.remove('open');
+                    dd.classList.remove('open');
+                }
+            }
+        });
+
+        // Optional: Auto-open first FAQ on page load for better UX
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstFaq = document.querySelector('.faq-card .faq-question');
+            if (firstFaq) {
+                // Uncomment to auto-open first FAQ
+                // setTimeout(() => toggleAnswer(firstFaq), 300);
+            }
+        });
+    </script>
+</body>
+</html>

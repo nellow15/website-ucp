@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - CENTRA ROLEPLAY</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ── Grid ───────────────────────────────────────────────────── */
+        .settings-container {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 1.5rem;
+            padding: 1.5rem 0 3rem;
+            align-items: start;
+        }
+
+        /* ── Sidebar ─────────────────────────────────────────────────── */
+        .settings-sidebar {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+            position: sticky;
+            top: 5rem;
+        }
+        .sidebar-profile {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #000 0%, #1f2937 100%);
+            color: #fff;
+            text-align: center;
+        }
+        .sidebar-avatar {
+            width: 72px; height: 72px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem; margin: 0 auto 0.85rem;
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .sidebar-avatar img {
+            width: 100%; height: 100%;
+            object-fit: cover; border-radius: 50%;
+        }
+        .sidebar-username { font-size: 1rem; font-weight: 700; margin: 0 0 0.25rem; }
+        .sidebar-role { font-size: 0.75rem; color: rgba(255,255,255,0.6); }
+
+        .sidebar-nav { padding: 0.5rem 0; }
+        .sidebar-nav-item {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 0.75rem 1.25rem;
+            color: #374151; font-size: 0.9rem; font-weight: 500;
+            text-decoration: none; cursor: pointer;
+            transition: all 0.15s ease;
+            border-left: 3px solid transparent;
+        }
+        .sidebar-nav-item:hover { background: #f9fafb; color: #000; }
+        .sidebar-nav-item.active { background: #f3f4f6; color: #000; font-weight: 600; border-left-color: #000; }
+        .sidebar-nav-item i { width: 18px; text-align: center; color: #6b7280; }
+        .sidebar-nav-item.active i, .sidebar-nav-item:hover i { color: #000; }
+        .sidebar-divider { height: 1px; background: #f3f4f6; margin: 0.25rem 0; }
+
+        .sidebar-nav-item .coming-pill {
+            margin-left: auto;
+            font-size: 0.62rem;
+            font-weight: 700;
+            background: #f3f4f6;
+            color: #9ca3af;
+            padding: 0.1rem 0.45rem;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* ── Main Content ────────────────────────────────────────────── */
+        .settings-main { display: flex; flex-direction: column; gap: 1.25rem; }
+
+        .settings-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+        }
+        .settings-card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid #f3f4f6;
+            display: flex; align-items: center; gap: 0.75rem;
+        }
+        .settings-card-header h3 {
+            margin: 0; font-size: 1rem; font-weight: 700; color: #111827;
+        }
+        .settings-card-header p {
+            margin: 0.15rem 0 0; font-size: 0.8rem; color: #6b7280;
+        }
+        .settings-card-icon {
+            width: 40px; height: 40px; border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; flex-shrink: 0;
+        }
+        .settings-card-body { padding: 1.25rem 1.5rem; }
+
+        /* ── Info Table ──────────────────────────────────────────────── */
+        .info-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        .info-table tr { border-bottom: 1px solid #f3f4f6; }
+        .info-table tr:last-child { border-bottom: none; }
+        .info-table td { padding: 0.75rem 0; vertical-align: middle; }
+        .info-table td:first-child {
+            width: 38%; color: #6b7280; font-weight: 500;
+            font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .info-table td:last-child { color: #111827; font-weight: 600; font-size: 0.95rem; }
+
+        /* Role badge */
+        .role-badge {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            padding: 0.25rem 0.75rem; border-radius: 20px;
+            font-size: 0.78rem; font-weight: 700;
+        }
+        .role-0 { background: #f3f4f6; color: #374151; border: 1px solid #d1d5db; }
+        .role-1 { background: #ecfdf5; color: #065f46; border: 1px solid #6ee7b7; }
+        .role-2 { background: #eff6ff; color: #1e40af; border: 1px solid #93c5fd; }
+        .role-3 { background: #eef2ff; color: #3730a3; border: 1px solid #a5b4fc; }
+        .role-4 { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+        .role-5 { background: #fff7ed; color: #9a3412; border: 1px solid #fdba74; }
+        .role-6 { background: #fdf4ff; color: #7e22ce; border: 1px solid #d8b4fe; }
+        .role-7 { background: #0f172a; color: #f8fafc;  border: 1px solid #334155; }
+
+        /* Verify code */
+        .verify-code-display {
+            font-family: 'Courier New', monospace; font-size: 1rem; font-weight: 600;
+            background: #f9fafb; padding: 0.35rem 0.75rem;
+            border-radius: 6px; border: 1px solid #e5e7eb;
+            display: inline-flex; align-items: center; gap: 0.5rem; margin-right: 0.5rem;
+        }
+        .copy-btn {
+            background: #000; color: white; border: none;
+            padding: 0.35rem 0.85rem; border-radius: 6px; font-weight: 500; font-size: 0.82rem;
+            cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.2s;
+        }
+        .copy-btn:hover { background: #333; }
+
+        /* ── Connect Row ─────────────────────────────────────────────── */
+        .connect-row {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 1rem; flex-wrap: wrap;
+        }
+        .connect-info { display: flex; align-items: center; gap: 0.85rem; }
+        .connect-icon {
+            width: 44px; height: 44px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
+        }
+        .connect-icon.email   { background: #f0fdf4; color: #059669; }
+        .connect-icon.email.un { background: #fef9c3; color: #b45309; }
+        .connect-icon.discord   { background: #eef2ff; color: #5865F2; }
+        .connect-icon.discord.un { background: #fef9c3; color: #b45309; }
+        .connect-text h4 { margin: 0 0 0.1rem; font-size: 0.95rem; font-weight: 700; color: #111827; }
+        .connect-text p  { margin: 0; font-size: 0.8rem; color: #6b7280; }
+
+        .badge-ok {
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            background: #f0fdf4; color: #059669; border: 1px solid #bbf7d0;
+            padding: 0.3rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+        }
+        .badge-no {
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            background: #fef9c3; color: #854d0e; border: 1px solid #fde68a;
+            padding: 0.3rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+        }
+
+        .btn-action {
+            padding: 0.5rem 1.1rem; border-radius: 6px;
+            font-weight: 600; font-size: 0.875rem; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            transition: all 0.2s; border: none; text-decoration: none;
+        }
+        .btn-black   { background: #000; color: #fff; }
+        .btn-black:hover { background: #333; }
+        .btn-discord { background: #5865F2; color: #fff; }
+        .btn-discord:hover { background: #4752c4; }
+
+        /* ── OTP Panel ───────────────────────────────────────────────── */
+        .otp-panel {
+            display: none; margin-top: 1rem;
+            background: #f9fafb; border: 1px solid #e5e7eb;
+            border-radius: 8px; padding: 1rem 1.25rem;
+        }
+        .otp-panel.active { display: block; }
+        .otp-panel p { margin: 0 0 0.75rem; font-size: 0.875rem; color: #374151; }
+        .otp-input-row { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+        .otp-input {
+            font-family: 'Courier New', monospace; font-size: 1.25rem;
+            letter-spacing: 4px; text-align: center; width: 140px; padding: 0.5rem;
+            border: 2px solid #e5e7eb; border-radius: 6px; outline: none; transition: border-color 0.2s;
+        }
+        .otp-input:focus { border-color: #000; }
+        .btn-otp-resend {
+            background: none; border: none; color: #6b7280;
+            font-size: 0.8rem; cursor: pointer; text-decoration: underline; padding: 0;
+        }
+        .btn-otp-resend:hover { color: #111; }
+
+        /* ── Coming Soon Card ────────────────────────────────────────── */
+        .coming-soon-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.85rem;
+        }
+        .coming-soon-item {
+            background: #f9fafb; border: 1px dashed #d1d5db;
+            border-radius: 10px; padding: 1.1rem 1rem;
+            display: flex; align-items: center; gap: 0.75rem;
+            opacity: 0.7;
+        }
+        .cs-icon {
+            width: 38px; height: 38px; background: #e5e7eb; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; color: #9ca3af; flex-shrink: 0;
+        }
+        .cs-text h5 { margin: 0 0 0.1rem; font-size: 0.85rem; font-weight: 700; color: #6b7280; }
+        .cs-text p  { margin: 0; font-size: 0.72rem; color: #9ca3af; }
+        .cs-pill {
+            margin-left: auto; font-size: 0.6rem; font-weight: 700;
+            background: #e5e7eb; color: #9ca3af;
+            padding: 0.1rem 0.45rem; border-radius: 20px;
+            text-transform: uppercase; letter-spacing: 0.3px; flex-shrink: 0;
+        }
+
+        /* ── Navigation ─────────────────────────────────────────────── */
+        .dashboard-nav {
+            background: #ffffff; border-bottom: 1px solid #e5e7eb;
+            padding: 1rem 0; position: sticky; top: 0; z-index: 100;
+        }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; }
+        .nav-brand { display: flex; align-items: center; gap: 0.75rem; font-size: 1.25rem; font-weight: 700; color: #000000; text-decoration: none; }
+/* ── User Dropdown ───────────────────────────────────────────── */
+        .nav-user-wrap { position: relative; }
+        .nav-user {
+            display: flex; align-items: center; gap: 0.6rem;
+            padding: 0.45rem 1rem; background: #f9fafb;
+            border: 1px solid #e5e7eb; border-radius: 8px;
+            color: #111827; font-weight: 600; font-size: 0.9rem;
+            cursor: pointer; user-select: none; transition: all 0.2s ease;
+        }
+        .nav-user:hover, .nav-user.open { background: #f3f4f6; border-color: #d1d5db; box-shadow: 0 2px 6px rgba(0,0,0,0.07); }
+        .nav-user i.fa-user-circle { color: #6b7280; font-size: 0.95rem; }
+        .nav-user i.fa-chevron-down { color: #9ca3af; font-size: 0.65rem; transition: transform 0.2s ease; }
+        .nav-user.open i.fa-chevron-down { transform: rotate(180deg); }
+        .nav-dropdown {
+            display: none; position: absolute; top: calc(100% + 0.5rem); right: 0;
+            background: #fff; border: 1px solid #e5e7eb; border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1); min-width: 180px; z-index: 300;
+            overflow: hidden; animation: dropIn 0.15s ease-out;
+        }
+        .nav-dropdown.open { display: block; }
+        @keyframes dropIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+        .nav-dropdown-header { padding: 0.75rem 1rem 0.5rem; font-size: 0.7rem; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #f3f4f6; }
+        .nav-dropdown-item {
+            display: flex; align-items: center; gap: 0.65rem;
+            padding: 0.65rem 1rem; color: #374151; font-size: 0.875rem;
+            font-weight: 500; text-decoration: none; transition: background 0.15s;
+        }
+        .nav-dropdown-item:hover { background: #f9fafb; color: #000; }
+        .nav-dropdown-item i { width: 16px; text-align: center; color: #6b7280; font-size: 0.85rem; }
+        .nav-dropdown-item:hover i { color: #000; }
+        .nav-actions { display: flex; gap: 0.75rem; align-items: center; }
+        .nav-btn { padding: 0.5rem 1rem; border-radius: 6px; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.2s ease; }
+        .nav-btn-home   { background: #f9fafb; color: #111827; border: 2px solid #e5e7eb; }
+        .nav-btn-home:hover { background: #e5e7eb; }
+        .nav-btn-logout { background: #000000; color: #ffffff; border: 2px solid #000000; }
+        .nav-btn-logout:hover { background: #333333; border-color: #333333; }
+
+        /* ── Footer ─────────────────────────────────────────────────── */
+        .footer { background: linear-gradient(135deg, #000 0%, #111 100%); color: white; padding: 4rem 0 2rem 0; margin-top: auto; position: relative; overflow: hidden; }
+        .footer::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); }
+        .footer-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3rem; margin-bottom: 3rem; }
+        .footer-brand { display: flex; flex-direction: column; gap: 1rem; }
+        .footer-logo { display: flex; align-items: center; gap: 0.75rem; color: white; font-size: 1.8rem; font-weight: 700; text-decoration: none; margin-bottom: 1rem; }
+        .footer-description { color: rgba(255,255,255,0.7); line-height: 1.6; font-size: 0.95rem; max-width: 300px; }
+        .footer-social { display: flex; gap: 1rem; margin-top: 1.5rem; }
+        .social-link { width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: all 0.3s ease; }
+        .social-link:hover { background: #000; transform: translateY(-3px); }
+        .footer-links-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+        .footer-links-column { display: flex; flex-direction: column; gap: 1rem; }
+        .footer-column-title { color: white; font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; position: relative; padding-bottom: 0.5rem; }
+        .footer-column-title::after { content: ''; position: absolute; bottom: 0; left: 0; width: 40px; height: 2px; background: white; }
+        .footer-link { color: rgba(255,255,255,0.7); text-decoration: none; transition: all 0.3s ease; display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0; }
+        .footer-link:hover { color: white; transform: translateX(5px); }
+        .footer-link i { font-size: 0.8rem; opacity: 0.7; }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; }
+        .footer-copyright { color: rgba(255,255,255,0.5); font-size: 0.9rem; }
+        .footer-legal { display: flex; gap: 2rem; flex-wrap: wrap; }
+        .footer-legal-link { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease; }
+        .footer-legal-link:hover { color: white; }
+
+        /* ── Toast ──────────────────────────────────────────────────── */
+        .toast { position: fixed; bottom: 2rem; right: 2rem; background: #000; color: white; padding: 1rem 1.5rem; border-radius: 8px; display: flex; align-items: center; gap: 0.75rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out; }
+
+        /* ── Responsive ─────────────────────────────────────────────── */
+        @media (max-width: 900px) {
+            .settings-container { grid-template-columns: 1fr; }
+            .settings-sidebar { position: static; }
+        }
+        @media (max-width: 640px) {
+            .nav-container { flex-direction: column; gap: 1rem; }
+            .nav-actions { width: 100%; justify-content: space-between; }
+            .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .footer-links-container { grid-template-columns: 1fr; gap: 1.5rem; }
+            .footer-bottom { flex-direction: column; text-align: center; gap: 1rem; }
+            .footer-legal { justify-content: center; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="dashboard-nav">
+        <div class="container nav-container">
+            <a href="/" class="nav-brand">CENTRA ROLEPLAY</a>
+            <div class="nav-actions">
+                <!-- Username dropdown -->
+                <div class="nav-user-wrap">
+                    <div class="nav-user" id="nav-user-btn" onclick="toggleDropdown()">
+                        <% if (user.discordAvatar) { %>
+                            <img src="<%= user.discordAvatar %>" alt=""
+                                 style="width:22px;height:22px;border-radius:50%;object-fit:cover;flex-shrink:0;">
+                        <% } else { %>
+                            <i class="fas fa-user-circle" style="color:#6b7280;font-size:0.95rem;"></i>
+                        <% } %>
+                        <span><%= user.username %></span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="nav-dropdown" id="nav-dropdown">
+                        <div class="nav-dropdown-header"><%= user.username %></div>
+                        <a href="/dashboard" class="nav-dropdown-item">
+                            <i class="fas fa-chart-line"></i> Dashboard
+                        </a>
+                        <a href="/settings" class="nav-dropdown-item">
+                            <i class="fas fa-gear"></i> Settings
+                        </a>
+                        <a href="/leaderboard" class="nav-dropdown-item">
+                            <i class="fas fa-trophy"></i> Leaderboard
+                        </a>
+                    </div>
+                </div>
+                <a href="/logout" class="nav-btn nav-btn-logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="page-wrapper">
+        <div class="container">
+            <div class="settings-container">
+
+                <!-- Sidebar -->
+                <aside class="settings-sidebar animate-fade-in">
+                    <div class="sidebar-profile">
+                        <div class="sidebar-avatar">
+                            <% if (user.discordAvatar) { %>
+                                <img src="<%= user.discordAvatar %>" alt="<%= user.username %>">
+                            <% } else { %>
+                                <i class="fas fa-user"></i>
+                            <% } %>
+                        </div>
+                        <div class="sidebar-username"><%= user.username %></div>
+                        <%
+                            const roleIcons = { 0:'fa-user', 1:'fa-hands-helping', 2:'fa-user-shield', 3:'fa-shield-alt', 4:'fa-briefcase', 5:'fa-chess-king', 6:'fa-crown', 7:'fa-code' };
+                            const roleIcon = roleIcons[user.adminLevel] || 'fa-user';
+                        %>
+                        <div class="sidebar-role"><i class="fas <%= roleIcon %>"></i> <%= user.accountRole %></div>
+                    </div>
+                    <nav class="sidebar-nav">
+                        <a class="sidebar-nav-item active" id="nav-security" href="#" onclick="showSection('security'); return false;">
+                            <i class="fas fa-shield-alt"></i> Account & Security
+                        </a>
+                        <div class="sidebar-divider"></div>
+                        <span class="sidebar-nav-item" style="cursor:default;opacity:0.55;">
+                            <i class="fas fa-bell"></i> Notifications
+                            <span class="coming-pill">Soon</span>
+                        </span>
+                        <span class="sidebar-nav-item" style="cursor:default;opacity:0.55;">
+                            <i class="fas fa-palette"></i> Appearance
+                            <span class="coming-pill">Soon</span>
+                        </span>
+                        <a class="sidebar-nav-item" id="nav-password" href="#" onclick="showSection('password'); return false;">
+                            <i class="fas fa-lock"></i> Change Password
+                        </a>
+                        <a class="sidebar-nav-item" id="nav-history" href="#" onclick="showSection('history'); return false;">
+                            <i class="fas fa-history"></i> Login History
+                        </a>
+                        <div class="sidebar-divider"></div>
+                        <a class="sidebar-nav-item" href="/dashboard">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </a>
+                    </nav>
+                </aside>
+
+                <!-- Main -->
+                <div class="settings-main">
+
+                    <!-- Account Information -->
+                    <div class="settings-card animate-fade-in" id="account-info-card">
+                        <div class="settings-card-header">
+                            <div class="settings-card-icon" style="background:#f3f4f6;color:#000;">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div>
+                                <h3>Account Information</h3>
+                                <p>Your UCP account details</p>
+                            </div>
+                        </div>
+                        <div class="settings-card-body">
+                            <table class="info-table">
+                                <tr><td>Database ID</td><td>#<%= user.id %></td></tr>
+                                <tr><td>Username</td><td><%= user.username %></td></tr>
+                                <tr><td>Email</td><td><%= user.email %></td></tr>
+                                <tr><td>Phone</td><td><%= user.phone %></td></tr>
+                                <tr>
+                                    <td>Account Type</td>
+                                    <td>
+                                        <span class="role-badge role-<%= user.adminLevel %>">
+                                            <i class="fas <%= roleIcon %>"></i> <%= user.accountRole %>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Status</td>
+                                    <td>
+                                        <% if (user.banned) { %>
+                                            <span style="color:#dc2626;font-weight:700;"><i class="fas fa-ban"></i> Banned</span>
+                                        <% } else { %>
+                                            <span style="color:#059669;font-weight:700;"><i class="fas fa-check-circle"></i> Active</span>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                                <% if (user.verifyCode) { %>
+                                <tr>
+                                    <td>In-Game Code</td>
+                                    <td>
+                                        <span class="verify-code-display"><%= user.verifyCode %></span>
+                                        <button class="copy-btn" onclick="copyCode()">
+                                            <i class="fas fa-copy"></i> Copy
+                                        </button>
+                                    </td>
+                                </tr>
+                                <% } %>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Email Verification -->
+                    <div class="settings-card animate-fade-in" id="email-verify-card" style="animation-delay:0.1s;">
+                        <div class="settings-card-header">
+                            <div class="settings-card-icon" style="background:#f0fdf4;color:#059669;">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <h3>Email Verification</h3>
+                            </div>
+                        </div>
+                        <div class="settings-card-body">
+                            <div class="connect-row">
+                                <div class="connect-info">
+                                    <div class="connect-icon email <%= user.emailVerified ? '' : 'un' %>">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                    <div class="connect-text">
+                                        <h4><%= user.email %></h4>
+                                        <p>
+                                            <% if (user.emailVerified) { %>
+                                                Your email address has been verified.
+                                            <% } else { %>
+                                                Your email address has not been verified yet.
+                                            <% } %>
+                                        </p>
+                                    </div>
+                                </div>
+                                <% if (user.emailVerified) { %>
+                                    <span class="badge-ok"><i class="fas fa-check-circle"></i> Verified</span>
+                                <% } else { %>
+                                    <button class="btn-action btn-black" onclick="sendEmailOTP(this)">
+                                        <i class="fas fa-paper-plane"></i> Send OTP
+                                    </button>
+                                <% } %>
+                            </div>
+
+                            <% if (!user.emailVerified) { %>
+                            <div class="otp-panel" id="otp-panel">
+                                <p>Enter the 6-digit code sent to <strong><%= user.email %></strong>:</p>
+                                <div class="otp-input-row">
+                                    <input type="text" class="otp-input" id="otp-input"
+                                           maxlength="6" placeholder="000000"
+                                           oninput="this.value=this.value.replace(/\D/g,'')">
+                                    <button class="btn-action btn-black" onclick="confirmEmailOTP()">
+                                        <i class="fas fa-check"></i> Confirm
+                                    </button>
+                                    <button class="btn-otp-resend" onclick="sendEmailOTP(null)">Resend code</button>
+                                </div>
+                            </div>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <!-- Discord -->
+                    <div class="settings-card animate-fade-in" id="discord-card" style="animation-delay:0.2s;">
+                        <div class="settings-card-header">
+                            <div class="settings-card-icon" style="background:#eef2ff;color:#5865F2;">
+                                <i class="fab fa-discord"></i>
+                            </div>
+                            <div>
+                                <h3>Discord Account</h3>
+                            </div>
+                        </div>
+                        <div class="settings-card-body">
+                            <div class="connect-row">
+                                <div class="connect-info">
+                                    <div class="connect-icon discord <%= user.discordVerified ? '' : 'un' %>">
+                                        <i class="fab fa-discord"></i>
+                                    </div>
+                                    <div class="connect-text">
+                                        <% if (user.discordVerified && user.discordUsername) { %>
+                                            <h4><%= user.discordUsername %></h4>
+                                            <p>Your Discord account is linked and active.</p>
+                                        <% } else { %>
+                                            <h4>Not connected</h4>
+                                            <p>Connect your Discord account to enable Discord-based features.</p>
+                                        <% } %>
+                                    </div>
+                                </div>
+                                <% if (user.discordVerified) { %>
+                                    <span class="badge-ok"><i class="fas fa-check-circle"></i> Connected</span>
+                                <% } else { %>
+                                    <a href="/verify/discord" class="btn-action btn-discord">
+                                        <i class="fab fa-discord"></i> Connect Discord
+                                    </a>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Change Password -->
+                    <div class="settings-card animate-fade-in" id="change-password-card" style="animation-delay:0.25s;">
+                        <div class="settings-card-header">
+                            <div class="settings-card-icon" style="background:#f3f4f6;color:#000;">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <div>
+                                <h3>Change Password</h3>
+                            </div>
+                        </div>
+                        <div class="settings-card-body">
+                            <div id="pw-error" style="display:none;background:#fef2f2;color:#dc2626;border:1px solid #fecaca;padding:0.6rem 0.85rem;border-radius:7px;font-size:0.82rem;font-weight:500;margin-bottom:1rem;"></div>
+                            <div id="pw-success" style="display:none;background:#f0fdf4;color:#059669;border:1px solid #bbf7d0;padding:0.6rem 0.85rem;border-radius:7px;font-size:0.82rem;font-weight:500;margin-bottom:1rem;"></div>
+                            <div style="display:flex;flex-direction:column;gap:1rem;max-width:420px;">
+                                <div style="display:flex;flex-direction:column;gap:0.35rem;">
+                                    <label style="font-size:0.8rem;font-weight:600;color:#374151;">Current Password</label>
+                                    <div style="position:relative;">
+                                        <input type="password" id="current-pw" placeholder="Enter current password"
+                                               autocomplete="current-password"
+                                               style="width:100%;padding:0.6rem 2.5rem 0.6rem 0.85rem;border:1.5px solid #e5e7eb;border-radius:7px;font-size:0.9rem;outline:none;box-sizing:border-box;font-family:inherit;transition:border-color 0.2s;"
+                                               onfocus="this.style.borderColor='#000'" onblur="this.style.borderColor='#e5e7eb'">
+                                        <button type="button" onclick="togglePw('current-pw',this)"
+                                                style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);background:none;border:none;color:#9ca3af;cursor:pointer;padding:0;">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div style="display:flex;flex-direction:column;gap:0.35rem;">
+                                    <label style="font-size:0.8rem;font-weight:600;color:#374151;">New Password</label>
+                                    <div style="position:relative;">
+                                        <input type="password" id="new-pw" placeholder="Enter new password"
+                                               autocomplete="new-password"
+                                               style="width:100%;padding:0.6rem 2.5rem 0.6rem 0.85rem;border:1.5px solid #e5e7eb;border-radius:7px;font-size:0.9rem;outline:none;box-sizing:border-box;font-family:inherit;transition:border-color 0.2s;"
+                                               onfocus="this.style.borderColor='#000'" onblur="this.style.borderColor='#e5e7eb'">
+                                        <button type="button" onclick="togglePw('new-pw',this)"
+                                                style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);background:none;border:none;color:#9ca3af;cursor:pointer;padding:0;">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div style="display:flex;flex-direction:column;gap:0.35rem;">
+                                    <label style="font-size:0.8rem;font-weight:600;color:#374151;">Confirm New Password</label>
+                                    <div style="position:relative;">
+                                        <input type="password" id="confirm-pw" placeholder="Confirm new password"
+                                               autocomplete="new-password"
+                                               style="width:100%;padding:0.6rem 2.5rem 0.6rem 0.85rem;border:1.5px solid #e5e7eb;border-radius:7px;font-size:0.9rem;outline:none;box-sizing:border-box;font-family:inherit;transition:border-color 0.2s;"
+                                               onfocus="this.style.borderColor='#000'" onblur="this.style.borderColor='#e5e7eb'">
+                                        <button type="button" onclick="togglePw('confirm-pw',this)"
+                                                style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);background:none;border:none;color:#9ca3af;cursor:pointer;padding:0;">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button id="save-pw-btn" onclick="submitChangePassword()"
+                                            style="background:#000;color:#fff;border:none;padding:0.6rem 1.4rem;border-radius:7px;font-weight:600;font-size:0.875rem;cursor:pointer;display:inline-flex;align-items:center;gap:0.5rem;transition:background 0.2s;"
+                                            onmouseover="this.style.background='#333'" onmouseout="this.style.background='#000'">
+                                        <i class="fas fa-save"></i> Save Password
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Login History -->
+                    <div class="settings-card animate-fade-in" id="login-history-card" style="animation-delay:0.3s;">
+                        <div class="settings-card-header">
+                            <div class="settings-card-icon" style="background:#f3f4f6;color:#374151;">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <div>
+                                <h3>Login History</h3>
+                            </div>
+                        </div>
+                        <div class="settings-card-body" style="padding-top:0.5rem;">
+                            <% if (!loginHistory || loginHistory.length === 0) { %>
+                                <div style="text-align:center;padding:2rem 1rem;color:#9ca3af;">
+                                    <i class="fas fa-history" style="font-size:2rem;margin-bottom:0.5rem;display:block;"></i>
+                                    <p style="margin:0;font-size:0.875rem;">No login history found.</p>
+                                </div>
+                            <% } else { %>
+                                <!-- Pass data to JS -->
+                                <script>
+                                    window._loginHistory = <%- JSON.stringify(loginHistory) %>;
+                                </script>
+                                <div style="overflow-x:auto;">
+                                    <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+                                        <thead>
+                                            <tr style="border-bottom:2px solid #f3f4f6;">
+                                                <th style="text-align:left;padding:0.75rem 0.5rem;color:#6b7280;font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;width:2.5rem;">#</th>
+                                                <th style="text-align:left;padding:0.75rem 0.5rem;color:#6b7280;font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Date & Time</th>
+                                                <th style="text-align:left;padding:0.75rem 0.5rem;color:#6b7280;font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">IP Address</th>
+                                                <th style="text-align:left;padding:0.75rem 0.5rem;color:#6b7280;font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Location</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="history-tbody"></tbody>
+                                    </table>
+                                </div>
+                                <!-- Pagination -->
+                                <div id="history-pagination" style="display:flex;align-items:center;justify-content:space-between;margin-top:1rem;flex-wrap:wrap;gap:0.5rem;"></div>
+                            <% } %>
+                        </div>
+                    </div>
+
+                </div><!-- /.settings-main -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="/" class="footer-logo">CENTRA ROLEPLAY</a>
+                    <p class="footer-description">Professional SA:MP User Control Panel providing secure account management and enhanced gaming experience for San Andreas Multiplayer community.</p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" aria-label="Discord"><i class="fab fa-discord"></i></a>
+                        <a href="#" class="social-link" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links-container">
+                    <div class="footer-links-column">
+                        <h4 class="footer-column-title">Navigation</h4>
+                        <a href="/"         class="footer-link"><i class="fas fa-home"></i> Home</a>
+                        <a href="/login"    class="footer-link"><i class="fas fa-sign-in-alt"></i> Login</a>
+                        <a href="/register" class="footer-link"><i class="fas fa-user-plus"></i> Register</a>
+                        <a href="/about"    class="footer-link"><i class="fas fa-info-circle"></i> About Us</a>
+                    </div>
+                    <div class="footer-links-column">
+                        <h4 class="footer-column-title">Resources</h4>
+                        <a href="/guides"  class="footer-link"><i class="fas fa-book"></i> Guides</a>
+                        <a href="/faq"     class="footer-link"><i class="fas fa-question-circle"></i> FAQ</a>
+                        <a href="/support" class="footer-link"><i class="fas fa-headset"></i> Support</a>
+                        <a href="/status"  class="footer-link"><i class="fas fa-server"></i> Server Status</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-copyright"><p><i class="fas fa-copyright"></i> 2025 CENTRA ROLEPLAY. All rights reserved.</p></div>
+                <div class="footer-legal">
+                    <a href="/privacy" class="footer-legal-link">Privacy Policy</a>
+                    <a href="/terms"   class="footer-legal-link">Terms of Service</a>
+                    <a href="/cookies" class="footer-legal-link">Cookie Policy</a>
+                    <a href="/legal"   class="footer-legal-link">Legal Notice</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+   
+
+    <script>
+
+        // ── Dropdown ────────────────────────────────────────────────────
+        function toggleDropdown() {
+            const btn = document.getElementById('nav-user-btn');
+            const dd  = document.getElementById('nav-dropdown');
+            btn.classList.toggle('open');
+            dd.classList.toggle('open');
+        }
+        document.addEventListener('click', function (e) {
+            const wrap = document.querySelector('.nav-user-wrap');
+            if (wrap && !wrap.contains(e.target)) {
+                const btn = document.getElementById('nav-user-btn');
+                const dd  = document.getElementById('nav-dropdown');
+                if (btn) btn.classList.remove('open');
+                if (dd)  dd.classList.remove('open');
+            }
+        });
+        // ── Section switcher ───────────────────────────────────────────
+        const SECTIONS = {
+            security: ['account-info-card','email-verify-card','discord-card','more-features-card'],
+            password: ['change-password-card'],
+            history:  ['login-history-card'],
+        };
+        const ALL_CARDS = [
+            'account-info-card','email-verify-card','discord-card',
+            'change-password-card','login-history-card','more-features-card'
+        ];
+        const NAV_MAP = {
+            security: 'nav-security',
+            password: 'nav-password',
+            history:  'nav-history',
+        };
+
+        function showSection(section) {
+            // Hide all cards
+            ALL_CARDS.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
+            });
+            // Show only cards for this section
+            (SECTIONS[section] || []).forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = '';
+            });
+            // Update active nav
+            Object.keys(NAV_MAP).forEach(k => {
+                const nav = document.getElementById(NAV_MAP[k]);
+                if (nav) nav.classList.toggle('active', k === section);
+            });
+            // Re-render history pagination when switching to history
+            if (section === 'history') renderHistoryPage();
+            // Scroll to top of main
+            document.querySelector('.settings-main').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // ── Password toggle ────────────────────────────────────────────
+        function togglePw(id, btn) {
+            const input = document.getElementById(id);
+            const isText = input.type === 'text';
+            input.type = isText ? 'password' : 'text';
+            btn.innerHTML = isText ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+        }
+
+        // ── Change Password (inline card) ──────────────────────────────
+        async function submitChangePassword() {
+            const currentPassword = document.getElementById('current-pw').value.trim();
+            const newPassword     = document.getElementById('new-pw').value.trim();
+            const confirmPassword = document.getElementById('confirm-pw').value.trim();
+            const errEl           = document.getElementById('pw-error');
+            const okEl            = document.getElementById('pw-success');
+
+            errEl.style.display = 'none';
+            okEl.style.display  = 'none';
+
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                errEl.textContent   = 'Please fill in all fields.';
+                errEl.style.display = 'block';
+                return;
+            }
+            if (newPassword !== confirmPassword) {
+                errEl.textContent   = 'New passwords do not match.';
+                errEl.style.display = 'block';
+                return;
+            }
+            if (newPassword.length < 6) {
+                errEl.textContent   = 'New password must be at least 6 characters.';
+                errEl.style.display = 'block';
+                return;
+            }
+
+            const btn = document.getElementById('save-pw-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
+
+            try {
+                const res  = await fetch('/settings/change-password', {
+                    method:  'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body:    JSON.stringify({ currentPassword, newPassword, confirmPassword })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('current-pw').value = '';
+                    document.getElementById('new-pw').value     = '';
+                    document.getElementById('confirm-pw').value = '';
+                    okEl.textContent   = 'Password changed successfully!';
+                    okEl.style.display = 'block';
+                    showToast('Password changed successfully!');
+                } else {
+                    errEl.textContent   = data.error || 'Failed to change password.';
+                    errEl.style.display = 'block';
+                }
+            } catch {
+                errEl.textContent   = 'Network error. Please try again.';
+                errEl.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Save Password';
+            }
+        }
+
+        // ── Login History Pagination ────────────────────────────────────
+        const HISTORY_PER_PAGE = 5;
+        let historyPage = 1;
+
+        function renderHistoryPage() {
+            const data = window._loginHistory || [];
+            if (!data.length) return;
+
+            const totalPages = Math.ceil(data.length / HISTORY_PER_PAGE);
+            const start      = (historyPage - 1) * HISTORY_PER_PAGE;
+            const slice      = data.slice(start, start + HISTORY_PER_PAGE);
+
+            const tbody = document.getElementById('history-tbody');
+            if (!tbody) return;
+
+            tbody.innerHTML = slice.map((entry, i) => {
+                const num  = start + i + 1;
+                const time = entry.time
+                    ? new Date(entry.time).toLocaleString('en-GB', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit' })
+                    : '—';
+                const loc  = entry.location
+                    ? `<i class="fas fa-map-marker-alt" style="color:#ef4444;margin-right:0.3rem;font-size:0.72rem;"></i>${entry.location}`
+                    : `<span style="color:#d1d5db;font-style:italic;">Unknown</span>`;
+                return `
+                    <tr style="border-bottom:1px solid #f9fafb;">
+                        <td style="padding:0.75rem 0.5rem;color:#d1d5db;font-size:0.78rem;">${num}</td>
+                        <td style="padding:0.75rem 0.5rem;">
+                            <span style="font-family:'Courier New',monospace;font-size:0.8rem;color:#374151;">${time}</span>
+                        </td>
+                        <td style="padding:0.75rem 0.5rem;">
+                            <span style="font-family:'Courier New',monospace;font-size:0.78rem;background:#f3f4f6;padding:0.15rem 0.5rem;border-radius:4px;color:#374151;">${entry.ip}</span>
+                        </td>
+                        <td style="padding:0.75rem 0.5rem;color:#6b7280;font-size:0.85rem;">${loc}</td>
+                    </tr>`;
+            }).join('');
+
+            // Pagination controls
+            const pg = document.getElementById('history-pagination');
+            if (!pg) return;
+
+            if (totalPages <= 1) { pg.innerHTML = ''; return; }
+
+            const btnStyle = (active) =>
+                `style="padding:0.35rem 0.75rem;border-radius:6px;border:1.5px solid ${active ? '#000' : '#e5e7eb'};background:${active ? '#000' : '#fff'};color:${active ? '#fff' : '#374151'};font-weight:600;font-size:0.8rem;cursor:${active ? 'default' : 'pointer'};transition:all 0.15s;"`;
+
+            let btns = `<span style="font-size:0.8rem;color:#6b7280;">Page ${historyPage} of ${totalPages}</span><div style="display:flex;gap:0.4rem;">`;
+
+            for (let p = 1; p <= totalPages; p++) {
+                btns += `<button ${btnStyle(p === historyPage)} onclick="goHistoryPage(${p})">${p}</button>`;
+            }
+            btns += '</div>';
+            pg.innerHTML = btns;
+        }
+
+        function goHistoryPage(p) {
+            historyPage = p;
+            renderHistoryPage();
+        }
+
+        // ── Copy in-game code ──────────────────────────────────────────
+        function copyCode() {
+            <% if (user.verifyCode) { %>
+            navigator.clipboard.writeText('<%= user.verifyCode %>').then(() => showToast('Code copied!')).catch(() => showToast('Failed to copy', 'error'));
+            <% } %>
+        }
+
+        // ── Email OTP ──────────────────────────────────────────────────
+        let otpSending = false;
+        async function sendEmailOTP(btn) {
+            if (otpSending) return;
+            otpSending = true;
+            if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending…'; }
+            try {
+                const res  = await fetch('/verify/email/send', { method: 'POST' });
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('otp-panel').classList.add('active');
+                    showToast('OTP sent! Check your email inbox.');
+                } else {
+                    showToast(data.error || 'Failed to send OTP', 'error');
+                }
+            } catch { showToast('Network error. Try again.', 'error'); }
+            finally {
+                otpSending = false;
+                if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP'; }
+            }
+        }
+
+        async function confirmEmailOTP() {
+            const otp = document.getElementById('otp-input').value.trim();
+            if (otp.length !== 6) { showToast('Please enter the 6-digit code', 'error'); return; }
+            try {
+                const res  = await fetch('/verify/email/confirm', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ otp }) });
+                const data = await res.json();
+                if (data.success) { showToast('Email verified!'); setTimeout(() => location.reload(), 1500); }
+                else showToast(data.error || 'Invalid OTP', 'error');
+            } catch { showToast('Network error. Try again.', 'error'); }
+        }
+
+        // ── Discord callback toast ─────────────────────────────────────
+        (function () {
+            const p = new URLSearchParams(window.location.search);
+            const d = p.get('discord');
+            if (d === 'success') showToast('Discord account connected!');
+            if (d === 'error')   showToast('Discord connection failed. Try again.', 'error');
+            if (d === 'taken')   showToast('This Discord account is already linked to another user.', 'error');
+            if (d) { const u = new URL(window.location.href); u.searchParams.delete('discord'); history.replaceState({}, '', u.toString()); }
+        })();
+
+        // ── Toast ───────────────────────────────────────────────────────
+        function showToast(message, type = 'success') {
+            const existing = document.querySelector('.toast');
+            if (existing) existing.remove();
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            const icon = type === 'error' ? 'fa-exclamation-circle' : type === 'info' ? 'fa-info-circle' : 'fa-check-circle';
+            toast.innerHTML = `<i class="fas ${icon}"></i><span>${message}</span>`;
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(100%)'; toast.style.transition = 'all 0.3s ease'; setTimeout(() => toast.remove(), 300); }, 3000);
+        }
+
+        // ── Init ────────────────────────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', function () {
+            showSection('security');
+        });
+    </script>
+
+</body>
+</html>

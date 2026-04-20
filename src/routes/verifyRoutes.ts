@@ -32,30 +32,71 @@ function getDiscordConfig() {
 }
 
 // ─── GET /dashboard ───────────────────────────────────────────────────────────
-// Status emailVerified & discordVerified selalu dibaca dari DB (bukan session)
-// agar tidak reset saat server restart
+// Status verifikasi + data karakter selalu dibaca dari DB agar tidak reset
+// saat server restart
 router.get('/dashboard', async (req: Request, res: Response) => {
     const session = req.session as any;
     if (!session?.user) return res.redirect('/login');
 
     try {
-        const [rows]: any = await pool.execute(
-            `SELECT EmailVerified, DiscordVerified, DiscordUsername
+        // Ambil status verifikasi + role terbaru dari DB
+        const [accRows]: any = await pool.execute(
+            `SELECT EmailVerified, DiscordVerified, DiscordUsername, DiscordAvatar, Admin, Banned, Password, Salt
              FROM accounts
              WHERE ID = ?`,
             [session.user.id]
         );
 
-        if (!rows.length) return res.redirect('/login');
+        if (!accRows.length) return res.redirect('/login');
+
+        const ROLE_MAP: Record<number, string> = {
+            0: 'Citizen',
+            1: 'Helper',
+            2: 'Administrator',
+            3: 'Head Administrator',
+            4: 'Management',
+            5: 'General Manager',
+            6: 'Executive',
+            7: 'Developer',
+        };
+        const adminLevel  = Number(accRows[0].Admin ?? 0);
+        const accountRole = ROLE_MAP[adminLevel] ?? 'Citizen';
+
+        // Ambil semua karakter milik user ini berdasarkan Username
+        const [characters]: any = await pool.execute(
+            `SELECT id, \`Character\`, \`Origin\`, \`Gender\`, \`Birthdate\`, \`Money\`, \`Gold\`, \`Skin\`, \`Story\`, \`Health\`, \`ArmorStatus\`
+             FROM characters
+             WHERE Username = ?`,
+            [session.user.username]
+        );
+
+        // Normalisasi data karakter
+        const characterList = characters.map((c: any) => ({
+            id:        c.id,
+            name:      c.Character,
+            origin:    c.Origin,
+            gender:    c.Gender === 1 ? 'Male' : 'Female',
+            birthdate: c.Birthdate,
+            money:     Number(c.Money).toLocaleString('id-ID'),
+            gold:      Number(c.Gold).toLocaleString('id-ID'),
+            story:     c.Story === 1 ? 'Active' : 'Inactive',
+            health:    Math.round(Number(c.Health)),
+            armor:     Math.round(Number(c.ArmorStatus)),
+            skin:      c.Skin,
+            skinUrl:   `https://assets.open.mp/assets/images/skins/${c.Skin}.png`,
+        }));
 
         const user = {
             ...session.user,
-            emailVerified:   rows[0].EmailVerified  === 1,
-            discordVerified: rows[0].DiscordVerified === 1,
-            discordUsername: rows[0].DiscordUsername || null,
+            emailVerified:   accRows[0].EmailVerified  === 1,
+            discordVerified: accRows[0].DiscordVerified === 1,
+            discordUsername: accRows[0].DiscordUsername || null,
+            discordAvatar:   accRows[0].DiscordAvatar   || null,
+            accountRole,
+            adminLevel,
         };
 
-        res.render('dashboard', { user });
+        res.render('dashboard', { user, characters: characterList });
     } catch (err) {
         console.error('[GET /dashboard]', err);
         res.status(500).send('Server error');
@@ -71,7 +112,6 @@ router.post('/verify/email/send', async (req: Request, res: Response) => {
         const userId    = session.user.id;
         const userEmail = session.user.email;
 
-        // Cek DB langsung agar tidak bypass saat session lama
         const [check]: any = await pool.execute(
             'SELECT EmailVerified FROM accounts WHERE ID = ?',
             [userId]
@@ -81,7 +121,7 @@ router.post('/verify/email/send', async (req: Request, res: Response) => {
         }
 
         const otp    = generateOTP();
-        const expiry = new Date(Date.now() + 10 * 60 * 1000); // 10 menit
+        const expiry = new Date(Date.now() + 10 * 60 * 1000);
 
         await pool.execute(
             'UPDATE accounts SET EmailOTP = ?, EmailOTPExpiry = ? WHERE ID = ?',
@@ -146,13 +186,11 @@ router.post('/verify/email/confirm', async (req: Request, res: Response) => {
         if (otp.trim() !== EmailOTP)
             return res.status(400).json({ error: 'Invalid OTP. Check your email.' });
 
-        // Simpan ke DB, hapus OTP
         await pool.execute(
             'UPDATE accounts SET EmailVerified = 1, EmailOTP = NULL, EmailOTPExpiry = NULL WHERE ID = ?',
             [userId]
         );
 
-        // Sync session supaya tidak perlu reload dua kali
         session.user.emailVerified = true;
 
         res.json({ success: true });
@@ -180,7 +218,7 @@ router.get('/verify/discord', (req: Request, res: Response) => {
         res.redirect(`https://discord.com/api/oauth2/authorize?${params.toString()}`);
     } catch (err) {
         console.error('[verify/discord]', err);
-        res.redirect('/dashboard?discord=error');
+        res.redirect('/settings?discord=error');
     }
 });
 
@@ -191,11 +229,10 @@ router.get('/verify/discord/callback', async (req: Request, res: Response) => {
         if (!session?.user) return res.redirect('/login');
 
         const { code, error } = req.query;
-        if (error || !code) return res.redirect('/dashboard?discord=error');
+        if (error || !code) return res.redirect('/settings?discord=error');
 
         const { clientId, clientSecret, redirectUri } = getDiscordConfig();
 
-        // Tukar code dengan access token
         const tokenRes = await axios.post(
             'https://discord.com/api/oauth2/token',
             new URLSearchParams({
@@ -210,7 +247,6 @@ router.get('/verify/discord/callback', async (req: Request, res: Response) => {
 
         const { access_token } = tokenRes.data;
 
-        // Ambil info user Discord
         const userRes = await axios.get('https://discord.com/api/users/@me', {
             headers: { Authorization: `Bearer ${access_token}` },
         });
@@ -222,16 +258,14 @@ router.get('/verify/discord/callback', async (req: Request, res: Response) => {
 
         const userId = session.user.id;
 
-        // Cek apakah Discord ID sudah dipakai akun lain
         const [existing]: any = await pool.execute(
             'SELECT ID FROM accounts WHERE DiscordID = ? AND ID != ?',
             [discordId, userId]
         );
         if (existing.length > 0) {
-            return res.redirect('/dashboard?discord=taken');
+            return res.redirect('/settings?discord=taken');
         }
 
-        // Simpan ke DB
         await pool.execute(
             `UPDATE accounts
              SET DiscordVerified = 1, DiscordID = ?, DiscordUsername = ?, DiscordAvatar = ?
@@ -239,14 +273,193 @@ router.get('/verify/discord/callback', async (req: Request, res: Response) => {
             [discordId, discordUsername, discordAvatar, userId]
         );
 
-        // Sync session
         session.user.discordVerified = true;
         session.user.discordUsername = discordUsername;
 
-        res.redirect('/dashboard?discord=success');
+        res.redirect('/settings?discord=success');
     } catch (err: any) {
         console.error('[verify/discord/callback]', err?.response?.data || err);
-        res.redirect('/dashboard?discord=error');
+        res.redirect('/settings?discord=error');
+    }
+});
+
+// ─── GET /settings ───────────────────────────────────────────────────────────
+router.get('/settings', async (req: Request, res: Response) => {
+    const session = req.session as any;
+    if (!session?.user) return res.redirect('/login');
+
+    try {
+        const [accRows]: any = await pool.execute(
+            `SELECT EmailVerified, DiscordVerified, DiscordUsername, DiscordAvatar, Admin, Banned, Password, Salt
+             FROM accounts
+             WHERE ID = ?`,
+            [session.user.id]
+        );
+
+        if (!accRows.length) return res.redirect('/login');
+
+        const ROLE_MAP: Record<number, string> = {
+            0: 'Citizen', 1: 'Helper', 2: 'Administrator',
+            3: 'Head Administrator', 4: 'Management',
+            5: 'General Manager', 6: 'Executive', 7: 'Developer',
+        };
+        const adminLevel  = Number(accRows[0].Admin ?? 0);
+        const accountRole = ROLE_MAP[adminLevel] ?? 'Citizen';
+
+        const user = {
+            ...session.user,
+            emailVerified:   accRows[0].EmailVerified  === 1,
+            discordVerified: accRows[0].DiscordVerified === 1,
+            discordUsername: accRows[0].DiscordUsername || null,
+            discordAvatar:   accRows[0].DiscordAvatar   || null,
+            accountRole,
+            adminLevel,
+            banned:          accRows[0].Banned === 1,
+            passwordHash:    accRows[0].Password,
+            salt:            accRows[0].Salt,
+        };
+
+        // Fetch login history (last 10 entries)
+        const [historyRows]: any = await pool.execute(
+            `SELECT IPAddress, LoginTime
+             FROM login_history
+             WHERE AccountID = ?
+             ORDER BY LoginTime DESC
+             LIMIT 50`,
+            [session.user.id]
+        );
+
+        // Fetch geo for each unique IP — fallback to null (shown as Unknown in template)
+        const loginHistory = await Promise.all(
+            historyRows.map(async (row: any) => {
+                const ip   = row.IPAddress || '—';
+                const time = row.LoginTime || new Date();
+                try {
+                    const geo = await axios.get(
+                        `http://ip-api.com/json/${ip}?fields=country,regionName,city,status`,
+                        { timeout: 3000 }
+                    );
+                    const d   = geo.data;
+                    const loc = (d.status === 'success' && d.city)
+                        ? `${d.city}, ${d.regionName}, ${d.country}`
+                        : null;
+                    return { ip, time, location: loc };
+                } catch {
+                    return { ip, time, location: null };
+                }
+            })
+        );
+
+        res.render('settings', { user, loginHistory });
+    } catch (err) {
+        console.error('[GET /settings]', err);
+        res.status(500).send('Server error');
+    }
+});
+
+// ─── POST /settings/change-password ──────────────────────────────────────────
+router.post('/settings/change-password', async (req: Request, res: Response) => {
+    try {
+        const session = req.session as any;
+        if (!session?.user) return res.status(401).json({ error: 'Not logged in' });
+
+        const { currentPassword, newPassword, confirmPassword } = req.body;
+
+        if (!currentPassword || !newPassword || !confirmPassword)
+            return res.status(400).json({ error: 'All fields are required' });
+
+        if (newPassword !== confirmPassword)
+            return res.status(400).json({ error: 'New passwords do not match' });
+
+        if (newPassword.length < 6)
+            return res.status(400).json({ error: 'New password must be at least 6 characters' });
+
+        const userId = session.user.id;
+
+        const [rows]: any = await pool.execute(
+            'SELECT Password, Salt FROM accounts WHERE ID = ?',
+            [userId]
+        );
+        if (!rows.length) return res.status(404).json({ error: 'User not found' });
+
+        const { createHash } = await import('crypto');
+
+        function hashPassword(password: string, salt: string): string {
+            return createHash('sha256')
+                .update(password + salt, 'utf8')
+                .digest('hex')
+                .toUpperCase();
+        }
+
+        function generateSalt(length = 64): string {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
+                          '!@#$%^&*()-_=+[]{}<>?/\\|`~:;"\',. ';
+            let salt = '';
+            for (let i = 0; i < length; i++) {
+                salt += chars[Math.floor(Math.random() * chars.length)];
+            }
+            return salt;
+        }
+
+        // Verify current password
+        const currentHash = hashPassword(currentPassword, rows[0].Salt);
+        if (currentHash !== rows[0].Password)
+            return res.status(400).json({ error: 'Current password is incorrect' });
+
+        // Generate new salt + hash
+        const newSalt = generateSalt();
+        const newHash = hashPassword(newPassword, newSalt);
+
+        await pool.execute(
+            'UPDATE accounts SET Password = ?, Salt = ? WHERE ID = ?',
+            [newHash, newSalt, userId]
+        );
+
+        res.json({ success: true });
+    } catch (err) {
+        console.error('[settings/change-password]', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// ─── GET /leaderboard ─────────────────────────────────────────────────────────
+router.get('/leaderboard', async (req: Request, res: Response) => {
+    const session = req.session as any;
+    if (!session?.user) return res.redirect('/login');
+
+    try {
+        const [topMoney]: any = await pool.execute(
+            `SELECT \`Character\`, Username, Money, Skin
+             FROM characters
+             ORDER BY Money DESC
+             LIMIT 10`
+        );
+
+        const [topGold]: any = await pool.execute(
+            `SELECT \`Character\`, Username, Gold, Skin
+             FROM characters
+             ORDER BY Gold DESC
+             LIMIT 10`
+        );
+
+        // Ambil discordAvatar terbaru dari DB untuk navbar
+        const [lbAcc]: any = await pool.execute(
+            'SELECT DiscordAvatar FROM accounts WHERE ID = ?',
+            [session.user.id]
+        );
+        const lbUser = {
+            ...session.user,
+            discordAvatar: lbAcc.length ? (lbAcc[0].DiscordAvatar || null) : null,
+        };
+
+        res.render('leaderboard', {
+            user: lbUser,
+            topMoney,
+            topGold,
+        });
+    } catch (err) {
+        console.error('[GET /leaderboard]', err);
+        res.status(500).send('Server error');
     }
 });
 
