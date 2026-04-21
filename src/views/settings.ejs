@@ -303,6 +303,25 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.3s ease-out; }
 
+        /* ── Delete Modal ────────────────────────────────────────────── */
+        .delete-modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5); z-index: 500;
+            align-items: center; justify-content: center;
+        }
+        .delete-modal-overlay.active { display: flex; }
+        .delete-modal-box {
+            background: #fff; border-radius: 14px;
+            width: 100%; max-width: 420px; margin: 1rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            overflow: hidden;
+            animation: modalIn 0.25s ease-out;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
         /* ── Responsive ─────────────────────────────────────────────── */
         @media (max-width: 900px) {
             .settings-container { grid-template-columns: 1fr; }
@@ -349,6 +368,9 @@
                         <a href="/leaderboard" class="nav-dropdown-item">
                             <i class="fas fa-trophy"></i> Leaderboard
                         </a>
+                        <a href="/support" class="nav-dropdown-item">
+                            <i class="fas fa-headset"></i> Support
+                        </a>
                     </div>
                 </div>
                 <a href="/logout" class="nav-btn nav-btn-logout">
@@ -374,7 +396,7 @@
                         </div>
                         <div class="sidebar-username"><%= user.username %></div>
                         <%
-                            const roleIcons = { 0:'fa-user', 1:'fa-hands-helping', 2:'fa-user-shield', 3:'fa-shield-alt', 4:'fa-briefcase', 5:'fa-chess-king', 6:'fa-crown', 7:'fa-code' };
+                            const roleIcons = { 0:'fa-user', 1: 'fa-hand-holding-heart', 2:'fa-hands-helping', 3:'fa-user-shield', 4:'fa-shield-alt', 5:'fa-briefcase', 6:'fa-chess-king', 7:'fa-crown', 8:'fa-code' };
                             const roleIcon = roleIcons[user.adminLevel] || 'fa-user';
                         %>
                         <div class="sidebar-role"><i class="fas <%= roleIcon %>"></i> <%= user.accountRole %></div>
@@ -548,6 +570,30 @@
                         </div>
                     </div>
 
+                    <!-- Delete Account -->
+                    <div class="settings-card animate-fade-in" id="delete-account-card" style="animation-delay:0.25s;border-color:#fecaca;">
+                        <div class="settings-card-header" style="border-bottom-color:#fef2f2;">
+                            <div class="settings-card-icon" style="background:#fef2f2;color:#dc2626;">
+                                <i class="fas fa-trash-alt"></i>
+                            </div>
+                            <div>
+                                <h3 style="color:#dc2626;">Delete Account</h3>
+                            </div>
+                        </div>
+                        <div class="settings-card-body">
+                            <p style="margin:0 0 1rem;font-size:0.875rem;color:#6b7280;line-height:1.6;">
+                                Permanently delete your UCP account and all associated data.
+                                <strong style="color:#dc2626;">This action cannot be undone.</strong>
+                            </p>
+                            <button onclick="openDeleteModal()"
+                                    style="background:#fef2f2;color:#dc2626;border:1.5px solid #fecaca;padding:0.55rem 1.25rem;border-radius:7px;font-weight:600;font-size:0.875rem;cursor:pointer;display:inline-flex;align-items:center;gap:0.5rem;transition:all 0.2s;"
+                                    onmouseover="this.style.background='#dc2626';this.style.color='#fff';this.style.borderColor='#dc2626';"
+                                    onmouseout="this.style.background='#fef2f2';this.style.color='#dc2626';this.style.borderColor='#fecaca';">
+                                <i class="fas fa-trash-alt"></i> Delete My Account
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- Change Password -->
                     <div class="settings-card animate-fade-in" id="change-password-card" style="animation-delay:0.25s;">
                         <div class="settings-card-header">
@@ -629,7 +675,6 @@
                                     <p style="margin:0;font-size:0.875rem;">No login history found.</p>
                                 </div>
                             <% } else { %>
-                                <!-- Pass data to JS -->
                                 <script>
                                     window._loginHistory = <%- JSON.stringify(loginHistory) %>;
                                 </script>
@@ -646,7 +691,6 @@
                                         <tbody id="history-tbody"></tbody>
                                     </table>
                                 </div>
-                                <!-- Pagination -->
                                 <div id="history-pagination" style="display:flex;align-items:center;justify-content:space-between;margin-top:1rem;flex-wrap:wrap;gap:0.5rem;"></div>
                             <% } %>
                         </div>
@@ -698,10 +742,51 @@
         </div>
     </footer>
 
-   
+    <!-- Delete Account Modal -->
+    <div class="delete-modal-overlay" id="delete-modal" onclick="if(event.target===this)closeDeleteModal()">
+        <div class="delete-modal-box">
+            <div style="padding:1.25rem 1.5rem;border-bottom:1px solid #fef2f2;display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:0.6rem;">
+                    <div style="width:36px;height:36px;background:#fef2f2;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#dc2626;font-size:1rem;">
+                        <i class="fas fa-triangle-exclamation"></i>
+                    </div>
+                    <h3 style="margin:0;font-size:1rem;font-weight:700;color:#111827;">Delete Account</h3>
+                </div>
+                <button onclick="closeDeleteModal()"
+                        style="background:none;border:none;color:#9ca3af;font-size:1.1rem;cursor:pointer;padding:0.25rem;border-radius:4px;transition:color 0.15s;"
+                        onmouseover="this.style.color='#111'" onmouseout="this.style.color='#9ca3af'">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div style="padding:1.25rem 1.5rem;display:flex;flex-direction:column;gap:1rem;">
+                <p style="margin:0;font-size:0.875rem;color:#374151;line-height:1.6;">
+                    Are you absolutely sure? This will <strong>permanently delete</strong> your account, all characters, and all associated data. There is no way to recover it.
+                </p>
+                <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:0.85rem 1rem;">
+                    <p style="margin:0 0 0.6rem;font-size:0.8rem;font-weight:600;color:#dc2626;">Type your username to confirm:</p>
+                    <input type="text" id="delete-confirm-input"
+                           placeholder="<%= user.username %>"
+                           style="width:100%;padding:0.55rem 0.85rem;border:1.5px solid #fecaca;border-radius:6px;font-size:0.9rem;outline:none;box-sizing:border-box;font-family:inherit;transition:border-color 0.2s;"
+                           onfocus="this.style.borderColor='#dc2626'" onblur="this.style.borderColor='#fecaca'"
+                           oninput="checkDeleteInput(this.value)">
+                </div>
+                <div id="delete-error" style="display:none;background:#fef2f2;color:#dc2626;border:1px solid #fecaca;padding:0.55rem 0.85rem;border-radius:6px;font-size:0.8rem;font-weight:500;"></div>
+            </div>
+            <div style="padding:1rem 1.5rem;border-top:1px solid #f3f4f6;display:flex;gap:0.75rem;justify-content:flex-end;">
+                <button onclick="closeDeleteModal()"
+                        style="background:#f3f4f6;color:#374151;border:none;padding:0.55rem 1.1rem;border-radius:7px;font-weight:600;font-size:0.875rem;cursor:pointer;transition:background 0.2s;"
+                        onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                    Cancel
+                </button>
+                <button id="delete-confirm-btn" onclick="submitDeleteAccount()" disabled
+                        style="background:#e5e7eb;color:#9ca3af;border:none;padding:0.55rem 1.25rem;border-radius:7px;font-weight:600;font-size:0.875rem;cursor:not-allowed;display:inline-flex;align-items:center;gap:0.5rem;transition:all 0.2s;">
+                    <i class="fas fa-trash-alt"></i> Delete Account
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script>
-
         // ── Dropdown ────────────────────────────────────────────────────
         function toggleDropdown() {
             const btn = document.getElementById('nav-user-btn');
@@ -718,15 +803,16 @@
                 if (dd)  dd.classList.remove('open');
             }
         });
+
         // ── Section switcher ───────────────────────────────────────────
         const SECTIONS = {
-            security: ['account-info-card','email-verify-card','discord-card','more-features-card'],
+            security: ['account-info-card','email-verify-card','discord-card','delete-account-card'],
             password: ['change-password-card'],
             history:  ['login-history-card'],
         };
         const ALL_CARDS = [
-            'account-info-card','email-verify-card','discord-card',
-            'change-password-card','login-history-card','more-features-card'
+            'account-info-card','email-verify-card','discord-card','delete-account-card',
+            'change-password-card','login-history-card'
         ];
         const NAV_MAP = {
             security: 'nav-security',
@@ -735,25 +821,66 @@
         };
 
         function showSection(section) {
-            // Hide all cards
             ALL_CARDS.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = 'none';
             });
-            // Show only cards for this section
             (SECTIONS[section] || []).forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = '';
             });
-            // Update active nav
             Object.keys(NAV_MAP).forEach(k => {
                 const nav = document.getElementById(NAV_MAP[k]);
                 if (nav) nav.classList.toggle('active', k === section);
             });
-            // Re-render history pagination when switching to history
             if (section === 'history') renderHistoryPage();
-            // Scroll to top of main
             document.querySelector('.settings-main').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // ── Delete Account Modal ────────────────────────────────────────
+        const _deleteUsername = '<%= user.username %>';
+
+        function openDeleteModal() {
+            document.getElementById('delete-confirm-input').value = '';
+            document.getElementById('delete-error').style.display = 'none';
+            checkDeleteInput('');
+            document.getElementById('delete-modal').classList.add('active');
+        }
+        function closeDeleteModal() {
+            document.getElementById('delete-modal').classList.remove('active');
+        }
+        function checkDeleteInput(val) {
+            const btn   = document.getElementById('delete-confirm-btn');
+            const match = val.trim() === _deleteUsername;
+            btn.disabled          = !match;
+            btn.style.background  = match ? '#dc2626' : '#e5e7eb';
+            btn.style.color       = match ? '#fff'    : '#9ca3af';
+            btn.style.cursor      = match ? 'pointer' : 'not-allowed';
+        }
+        async function submitDeleteAccount() {
+            const errEl = document.getElementById('delete-error');
+            const btn   = document.getElementById('delete-confirm-btn');
+            errEl.style.display = 'none';
+            btn.disabled        = true;
+            btn.innerHTML       = '<i class="fas fa-spinner fa-spin"></i> Deleting…';
+            try {
+                const res  = await fetch('/settings/delete-account', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+                const data = await res.json();
+                if (data.success) {
+                    showToast('Account deleted. Redirecting…');
+                    setTimeout(() => { window.location.href = '/'; }, 1500);
+                } else {
+                    errEl.textContent   = data.error || 'Failed to delete account.';
+                    errEl.style.display = 'block';
+                    btn.disabled        = false;
+                    btn.innerHTML       = '<i class="fas fa-trash-alt"></i> Delete Account';
+                }
+            } catch {
+                errEl.textContent   = 'Network error. Please try again.';
+                errEl.style.display = 'block';
+                btn.disabled        = false;
+                btn.innerHTML       = '<i class="fas fa-trash-alt"></i> Delete Account';
+            }
         }
 
         // ── Password toggle ────────────────────────────────────────────
@@ -764,7 +891,7 @@
             btn.innerHTML = isText ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
         }
 
-        // ── Change Password (inline card) ──────────────────────────────
+        // ── Change Password ────────────────────────────────────────────
         async function submitChangePassword() {
             const currentPassword = document.getElementById('current-pw').value.trim();
             const newPassword     = document.getElementById('new-pw').value.trim();
@@ -776,19 +903,13 @@
             okEl.style.display  = 'none';
 
             if (!currentPassword || !newPassword || !confirmPassword) {
-                errEl.textContent   = 'Please fill in all fields.';
-                errEl.style.display = 'block';
-                return;
+                errEl.textContent = 'Please fill in all fields.'; errEl.style.display = 'block'; return;
             }
             if (newPassword !== confirmPassword) {
-                errEl.textContent   = 'New passwords do not match.';
-                errEl.style.display = 'block';
-                return;
+                errEl.textContent = 'New passwords do not match.'; errEl.style.display = 'block'; return;
             }
             if (newPassword.length < 6) {
-                errEl.textContent   = 'New password must be at least 6 characters.';
-                errEl.style.display = 'block';
-                return;
+                errEl.textContent = 'New password must be at least 6 characters.'; errEl.style.display = 'block'; return;
             }
 
             const btn = document.getElementById('save-pw-btn');
@@ -797,25 +918,21 @@
 
             try {
                 const res  = await fetch('/settings/change-password', {
-                    method:  'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body:    JSON.stringify({ currentPassword, newPassword, confirmPassword })
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ currentPassword, newPassword, confirmPassword })
                 });
                 const data = await res.json();
                 if (data.success) {
                     document.getElementById('current-pw').value = '';
                     document.getElementById('new-pw').value     = '';
                     document.getElementById('confirm-pw').value = '';
-                    okEl.textContent   = 'Password changed successfully!';
-                    okEl.style.display = 'block';
+                    okEl.textContent = 'Password changed successfully!'; okEl.style.display = 'block';
                     showToast('Password changed successfully!');
                 } else {
-                    errEl.textContent   = data.error || 'Failed to change password.';
-                    errEl.style.display = 'block';
+                    errEl.textContent = data.error || 'Failed to change password.'; errEl.style.display = 'block';
                 }
             } catch {
-                errEl.textContent   = 'Network error. Please try again.';
-                errEl.style.display = 'block';
+                errEl.textContent = 'Network error. Please try again.'; errEl.style.display = 'block';
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-save"></i> Save Password';
@@ -848,27 +965,20 @@
                 return `
                     <tr style="border-bottom:1px solid #f9fafb;">
                         <td style="padding:0.75rem 0.5rem;color:#d1d5db;font-size:0.78rem;">${num}</td>
-                        <td style="padding:0.75rem 0.5rem;">
-                            <span style="font-family:'Courier New',monospace;font-size:0.8rem;color:#374151;">${time}</span>
-                        </td>
-                        <td style="padding:0.75rem 0.5rem;">
-                            <span style="font-family:'Courier New',monospace;font-size:0.78rem;background:#f3f4f6;padding:0.15rem 0.5rem;border-radius:4px;color:#374151;">${entry.ip}</span>
-                        </td>
+                        <td style="padding:0.75rem 0.5rem;"><span style="font-family:'Courier New',monospace;font-size:0.8rem;color:#374151;">${time}</span></td>
+                        <td style="padding:0.75rem 0.5rem;"><span style="font-family:'Courier New',monospace;font-size:0.78rem;background:#f3f4f6;padding:0.15rem 0.5rem;border-radius:4px;color:#374151;">${entry.ip}</span></td>
                         <td style="padding:0.75rem 0.5rem;color:#6b7280;font-size:0.85rem;">${loc}</td>
                     </tr>`;
             }).join('');
 
-            // Pagination controls
             const pg = document.getElementById('history-pagination');
             if (!pg) return;
-
             if (totalPages <= 1) { pg.innerHTML = ''; return; }
 
             const btnStyle = (active) =>
                 `style="padding:0.35rem 0.75rem;border-radius:6px;border:1.5px solid ${active ? '#000' : '#e5e7eb'};background:${active ? '#000' : '#fff'};color:${active ? '#fff' : '#374151'};font-weight:600;font-size:0.8rem;cursor:${active ? 'default' : 'pointer'};transition:all 0.15s;"`;
 
             let btns = `<span style="font-size:0.8rem;color:#6b7280;">Page ${historyPage} of ${totalPages}</span><div style="display:flex;gap:0.4rem;">`;
-
             for (let p = 1; p <= totalPages; p++) {
                 btns += `<button ${btnStyle(p === historyPage)} onclick="goHistoryPage(${p})">${p}</button>`;
             }
@@ -876,10 +986,7 @@
             pg.innerHTML = btns;
         }
 
-        function goHistoryPage(p) {
-            historyPage = p;
-            renderHistoryPage();
-        }
+        function goHistoryPage(p) { historyPage = p; renderHistoryPage(); }
 
         // ── Copy in-game code ──────────────────────────────────────────
         function copyCode() {

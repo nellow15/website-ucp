@@ -51,13 +51,14 @@ router.get('/dashboard', async (req: Request, res: Response) => {
 
         const ROLE_MAP: Record<number, string> = {
             0: 'Citizen',
-            1: 'Helper',
-            2: 'Administrator',
-            3: 'Head Administrator',
-            4: 'Management',
-            5: 'General Manager',
-            6: 'Executive',
-            7: 'Developer',
+            1: 'Volunter',
+            2: 'Helper',
+            3: 'Administrator',
+            4: 'Head Administrator',
+            5: 'Management',
+            6: 'General Manager',
+            7: 'Executive',
+            8: 'Developer',
         };
         const adminLevel  = Number(accRows[0].Admin ?? 0);
         const accountRole = ROLE_MAP[adminLevel] ?? 'Citizen';
@@ -299,9 +300,9 @@ router.get('/settings', async (req: Request, res: Response) => {
         if (!accRows.length) return res.redirect('/login');
 
         const ROLE_MAP: Record<number, string> = {
-            0: 'Citizen', 1: 'Helper', 2: 'Administrator',
-            3: 'Head Administrator', 4: 'Management',
-            5: 'General Manager', 6: 'Executive', 7: 'Developer',
+            0: 'Citizen', 1: 'Volunter', 2: 'Helper', 3: 'Administrator',
+            4: 'Head Administrator', 5: 'Management',
+            6: 'General Manager', 7: 'Executive', 8: 'Developer',
         };
         const adminLevel  = Number(accRows[0].Admin ?? 0);
         const accountRole = ROLE_MAP[adminLevel] ?? 'Citizen';
@@ -422,6 +423,7 @@ router.post('/settings/change-password', async (req: Request, res: Response) => 
     }
 });
 
+
 // ─── GET /leaderboard ─────────────────────────────────────────────────────────
 router.get('/leaderboard', async (req: Request, res: Response) => {
     const session = req.session as any;
@@ -460,6 +462,32 @@ router.get('/leaderboard', async (req: Request, res: Response) => {
     } catch (err) {
         console.error('[GET /leaderboard]', err);
         res.status(500).send('Server error');
+    }
+});
+
+
+// ─── POST /settings/delete-account ───────────────────────────────────────────
+router.post('/settings/delete-account', async (req: Request, res: Response) => {
+    try {
+        const session = req.session as any;
+        if (!session?.user) return res.status(401).json({ error: 'Not logged in' });
+
+        const userId   = session.user.id;
+        const username = session.user.username;
+
+        // Delete characters first (FK safety)
+        await pool.execute('DELETE FROM characters WHERE Username = ?', [username]);
+
+        // Delete the account
+        await pool.execute('DELETE FROM accounts WHERE ID = ?', [userId]);
+
+        // Destroy session
+        session.destroy(() => {});
+
+        res.json({ success: true });
+    } catch (err) {
+        console.error('[settings/delete-account]', err);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 

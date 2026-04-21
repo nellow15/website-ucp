@@ -6,6 +6,7 @@ import { config } from 'dotenv';
 import authRoutes from './routes/auth';
 import apiRoutes from './routes/api';
 import verifyRoutes from './routes/verifyRoutes';
+import supportRoutes from './routes/supportRoutes';
 import { connectDB } from './database';
 
 // Load environment variables
@@ -52,6 +53,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use('/', authRoutes);
 app.use('/api', apiRoutes);
 app.use('/', verifyRoutes);
+app.use('/', supportRoutes);
 
 // Home route
 app.get('/', (req, res) => {
